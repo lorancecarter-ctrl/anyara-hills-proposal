@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Anyara Hills — Sales Proposal</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Anyara Hills">
+<meta name="theme-color" content="#0c2316">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ============ NAV RAIL ============ -->
+  <nav id="rail" aria-label="Sections">
+    <div class="rail-mark">
+      <img src="assets/logo-black.png" alt="Anyara Hills" class="rail-logo">
+    </div>
+    <div class="rail-items" id="railItems"></div>
+    <button class="rail-session" id="btnSession">Session</button>
+  </nav>
+
+  <!-- ============ STAGE ============ -->
+  <main id="stage">
+
+    <!-- ---------- COVER ---------- -->
+    <section class="scene cover" data-scene="cover">
+      <div class="cover-wash"></div>
+      <div class="cover-inner">
+        <img src="assets/logo-black.png" alt="Anyara Hills" class="cover-logo">
+        <p class="cover-tag">For Those Who Live The Extraordinary</p>
+        <div class="cover-rule"></div>
+        <p class="cover-sub">A private hillside address shaped by nature,<br>architecture and refined long-term living.</p>
+
+        <div class="cover-guest" id="coverGuest" hidden>
+          <span class="cover-guest-label">Prepared for</span>
+          <span class="cover-guest-name" id="coverGuestName"></span>
+          <span class="cover-guest-meta" id="coverGuestMeta"></span>
+        </div>
+
+        <button class="btn btn-primary cover-cta" data-goto="estate">Begin the Presentation</button>
+        <button class="btn btn-ghost cover-alt" id="btnOpenSession">Set up this visit</button>
+      </div>
+      <div class="cover-foot">KHK Land · Goldhill Fortune Sdn Bhd</div>
+    </section>
+
+    <!-- ---------- THE ESTATE ---------- -->
+    <section class="scene" data-scene="estate">
+      <header class="scene-head">
+        <span class="eyebrow">01 — The Estate</span>
+        <h1>Anyar <span class="amp">+</span> Ara</h1>
+        <p class="lede">The union of <em>new</em> and <em>see</em> in Malay. A luxury homestead with a modern
+        approach to countryside living — an authentic refuge, made only for the refined.</p>
+      </header>
+      <div class="scene-body">
+        <div class="stat-row">
+          <div class="stat"><span class="stat-n">584</span><span class="stat-l">acres of freehold masterplan</span></div>
+          <div class="stat"><span class="stat-n">428</span><span class="stat-l">individually-titled one-acre lots</span></div>
+          <div class="stat"><span class="stat-n">70<i>%</i></span><span class="stat-l">open space and greenery</span></div>
+          <div class="stat"><span class="stat-n">8</span><span class="stat-l">private lakes on the estate</span></div>
+        </div>
+        <div class="split">
+          <div class="panel">
+            <h3>Set against 230 million years</h3>
+            <p>Anyara Hills rests in the foothills of Banjaran Titiwangsa — a 230-million-year-old range
+            beside the world's third-oldest rainforest. The land was formerly a palm oil plantation,
+            now returned to a masterplanned private estate.</p>
+            <ul class="ticks">
+              <li>35 acres of open spaces and waterbodies</li>
+              <li>8.2 km jogging track through the parkways</li>
+              <li>Street and garden lighting throughout the estate</li>
+            </ul>
+          </div>
+          <div class="panel panel-quote">
+            <blockquote>Buyers become founding members of Malaysia's most exclusive private estate network,
+            where ownership delivers land, lifestyle, and influential relationships.</blockquote>
+            <cite>The Anyara Founders Circle</cite>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- LOCATION ---------- -->
+    <section class="scene" data-scene="location">
+      <header class="scene-head">
+        <span class="eyebrow">02 — Location &amp; Access</span>
+        <h1>Twenty minutes from the city.<br>An age away from it.</h1>
+        <p class="lede">Jalan Sungai Lalang, Semenyih — Sungai Long East. About 30 km from KLCC,
+        reached via the SILK Highway, EKVE and the new Bypass Road.</p>
+      </header>
+      <div class="scene-body">
+        <div class="timeline">
+          <div class="tl-item">
+            <span class="tl-k">Today</span>
+            <span class="tl-v">20–25 min</span>
+            <span class="tl-d">to KLCC via SILK Highway &amp; EKVE</span>
+          </div>
+          <div class="tl-arrow" aria-hidden="true"></div>
+          <div class="tl-item tl-item-future">
+            <span class="tl-k">From 2027</span>
+            <span class="tl-v">~20 min</span>
+            <span class="tl-d">once the 4.2 km Bypass Road opens</span>
+          </div>
+        </div>
+        <div class="panel panel-note">
+          <h3>The New Bypass Road</h3>
+          <p>A 4.2 km link approved by the authorities and constructed by our own Group. The interchange
+          from the SILK Highway sits just after the Sungai Long toll, near the Twin Palm project when
+          approaching from Cheras. Estimated completion: end of 2027.</p>
+        </div>
+        <h3 class="sec-h">Within the vicinity</h3>
+        <div class="amenity-grid">
+          <div class="amenity">
+            <span class="am-k">Healthcare</span>
+            <p>KPJ Kajang Specialist Hospital · Sungai Long Specialist Hospital · Columbia Asia Hospital</p>
+          </div>
+          <div class="amenity">
+            <span class="am-k">Education</span>
+            <p>University of Nottingham Malaysia · UTAR Sungai Long · Tenby International School · Rafflesia International &amp; Private School</p>
+          </div>
+          <div class="amenity">
+            <span class="am-k">Recreation</span>
+            <p>Kajang Hill Golf Club · Saujana Impian Golf Club · Broga Hill</p>
+          </div>
+          <div class="amenity">
+            <span class="am-k">Retail</span>
+            <p>Lotus's Semenyih · EcoHill Walk · AEON Cheras Selatan</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- THE LAND ---------- -->
+    <section class="scene" data-scene="land">
+      <header class="scene-head">
+        <span class="eyebrow">03 — The Land</span>
+        <h1>One acre. Freehold.<br>Individual title.</h1>
+        <p class="lede">428 lots across 584 acres, of which Phase 1 comprises 238 lots. Freehold agricultural
+        land held under individual title — the rarest form of ownership at this scale near Kuala Lumpur.</p>
+      </header>
+      <div class="scene-body">
+        <div class="split">
+          <div class="panel">
+            <h3>What you may build</h3>
+            <p>Under the National Land Code, an agricultural title permits building on up to
+            <strong>20% of the land footprint</strong>.</p>
+            <div class="calc-line">
+              <span>43,560 sf</span><i>×</i><span>20%</span><i>=</i><strong>8,712 sf</strong>
+            </div>
+            <p class="fine">Buildable footprint on a standard one-acre lot.</p>
+            <ul class="ticks">
+              <li>Limited to one acre per individual name, or held in a company name</li>
+              <li>Title may not be converted from Agricultural to Residential, as stated in the SPA</li>
+              <li>Quit rent and assessment on agricultural land are substantially lower than residential</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Infrastructure, ready</h3>
+            <dl class="deflist">
+              <dt>Electricity</dt><dd>Ready for connection from the feeder pillar. Apply to TNB for connection and meter — up to 100A 3-phase.</dd>
+              <dt>Water</dt><dd>Ready for connection. Apply to Air Selangor for the meter.</dd>
+              <dt>Sewerage</dt><dd>Purchaser installs their own septic tank.</dd>
+              <dt>Roads &amp; drainage</dt><dd>Constructed by the Developer.</dd>
+              <dt>Lighting</dt><dd>Street and garden lighting along parkways and jogging paths, installed by the Developer.</dd>
+            </dl>
+            <p class="fine">No soil treatment has been carried out on the land.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- SECURITY ---------- -->
+    <section class="scene" data-scene="security">
+      <header class="scene-head">
+        <span class="eyebrow">04 — Security</span>
+        <h1>Privacy, engineered.</h1>
+        <p class="lede">Designed by GDSS Systems Sdn Bhd — consultants to Malaysia's first gated community,
+        Sierramas, and to Desa Park City. GDSS has twice been appointed to upgrade KLCC car park and
+        common area security.</p>
+      </header>
+      <div class="scene-body">
+        <div class="feature-grid">
+          <div class="feature"><span class="f-n">12 ft</span><p>Double security wall with electric fencing</p></div>
+          <div class="feature"><span class="f-n">200+</span><p>CCTV cameras across the estate</p></div>
+          <div class="feature"><span class="f-n">24 / 7</span><p>Armed guards at the main entrance, and patrolling</p></div>
+          <div class="feature"><span class="f-n">3 + 1</span><p>A guardhouse for each phase, plus the main guardhouse</p></div>
+          <div class="feature"><span class="f-n">Drone</span><p>Autonomous drone patrolling system</p></div>
+          <div class="feature"><span class="f-n">VMS</span><p>Visitor management system, with QR verification at the gate</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- LIFESTYLE HUB ---------- -->
+    <section class="scene" data-scene="lifestyle">
+      <header class="scene-head">
+        <span class="eyebrow">05 — The Anyara Lifestyle Hub</span>
+        <h1>Ten acres, at the centre of it.</h1>
+        <p class="lede">A commercial lifestyle hub with a natural hot spring spa, restaurant and café,
+        residents' lounge, event hall, gym, pools and a children's playground. Estimated completion:
+        end of 2027.</p>
+      </header>
+      <div class="scene-body">
+        <div class="split">
+          <div class="panel panel-accent">
+            <h3>Exclusive to owners</h3>
+            <ul class="ticks">
+              <li>Residents' Lounge</li>
+              <li>Meeting Room</li>
+              <li>Games Room</li>
+              <li>Reading Room</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Shared with guests of the estate</h3>
+            <ul class="ticks">
+              <li>Swimming Pool</li>
+              <li>Kids' Pool</li>
+              <li>Gym</li>
+              <li>Children's Playground</li>
+            </ul>
+            <p class="fine">The restaurant, wellness centre and event hall are open to the public.
+            The residents' lounge remains exclusive to owners.</p>
+          </div>
+        </div>
+        <h3 class="sec-h">Bespoke services</h3>
+        <div class="chip-row">
+          <span class="chip">Private butler</span>
+          <span class="chip">Chauffeur</span>
+          <span class="chip">Private chef</span>
+          <span class="chip">Housekeeping</span>
+          <span class="chip">Gardening craftsmen</span>
+          <span class="chip">Vellfire shuttle</span>
+          <span class="chip">Natural hot spring spa</span>
+          <span class="chip">Private helipad</span>
+          <span class="chip">Spa pavilion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- OWNERSHIP ---------- -->
+    <section class="scene" data-scene="ownership">
+      <header class="scene-head">
+        <span class="eyebrow">06 — Ownership</span>
+        <h1>What ownership involves.</h1>
+        <p class="lede">Clear, stated terms — the questions guests ask most often, answered plainly.</p>
+      </header>
+      <div class="scene-body">
+        <div class="own-grid">
+          <div class="own"><span class="own-k">Maintenance fee</span><span class="own-v">≈ RM 0.046 psf</span><p>Charged on lot size. Covers common-area landscaping, roads, drainage, street lighting, the lake, perimeter wall and security services.</p></div>
+          <div class="own"><span class="own-k">Operator charge</span><span class="own-v">≈ RM 500 / month</span><p>For The Anyara Lifestyle Hub, payable monthly to the Developer.</p></div>
+          <div class="own"><span class="own-k">Quit rent &amp; assessment</span><span class="own-v">&lt; RM 15,000</span><p>Total currently paid across the full 584 acres — agricultural rates sit far below residential.</p></div>
+          <div class="own"><span class="own-k">Completion</span><span class="own-v">24 – 36 months</span><p>Expected completion and handover, as per the Sale and Purchase Agreement.</p></div>
+        </div>
+        <div class="panel panel-note">
+          <h3>After sales, we stay involved</h3>
+          <p>The Developer assists purchasers with the design, submission and construction of their dwelling;
+          with the design, planting and maintenance of their farm or garden; and with housekeeping and butler
+          services along the lines set out in the sales kit.</p>
+          <p><strong>Architect Subsidy Programme —</strong> up to RM 40,000 where owners engage one of our panel architects.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- DISCOVERY ---------- -->
+    <section class="scene scene-tool" data-scene="discovery">
+      <header class="scene-head">
+        <span class="eyebrow">Advisor tool</span>
+        <h1>Conversation</h1>
+        <p class="lede">Pick one or two questions per stage. After they answer, go deeper before you move on.</p>
+      </header>
+      <div class="scene-body">
+        <div class="disc-expanders">
+          <span class="disc-exp-label">Expanders</span>
+          <span>“That's interesting — could you tell me a little more?”</span>
+          <span>“What makes you say that?”</span>
+          <span>“That's a great point.” <i>(pause)</i> “Could you share a little more?”</span>
+          <span>“I'd love to understand your perspective better.”</span>
+        </div>
+        <div id="discoveryStages"></div>
+        <div class="panel notes-panel">
+          <h3>Notes from this visit</h3>
+          <textarea id="visitNotes" rows="5" placeholder="What matters to them — privacy, family, legacy, the view. Capture it in their words."></textarea>
+          <p class="fine">Saved automatically on this iPad.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- PROPOSAL BUILDER ---------- -->
+    <section class="scene scene-tool" data-scene="builder">
+      <header class="scene-head">
+        <span class="eyebrow">Advisor tool</span>
+        <h1>Build the proposal</h1>
+        <p class="lede">Enter the lot and the terms in force today. Everything else is calculated.</p>
+      </header>
+      <div class="scene-body">
+        <div class="warn">
+          <strong>Confirm before you quote.</strong> Package figures change. Always verify the current
+          entitlement, rate and margin of finance with your sales manager before presenting them to a guest.
+        </div>
+
+        <div class="form-grid">
+          <fieldset class="fs">
+            <legend>The guest</legend>
+            <label>Prepared for<input type="text" id="fGuest" placeholder="Guest name"></label>
+            <label>Anyara Hills Advisor<input type="text" id="fAdvisor" placeholder="Your name"></label>
+            <label>Date of visit<input type="date" id="fDate"></label>
+          </fieldset>
+
+          <fieldset class="fs">
+            <legend>The lot</legend>
+            <label>Lot number<input type="text" id="fLot" placeholder="e.g. 036"></label>
+            <label>Land size (sf)<input type="number" id="fSf" inputmode="decimal" placeholder="43953"></label>
+            <label class="ro">Land size (acres)<output id="oAcres">—</output></label>
+          </fieldset>
+
+          <fieldset class="fs">
+            <legend>Pricing</legend>
+            <label>List price (RM)<input type="number" id="fList" inputmode="decimal" placeholder="6043750"></label>
+            <label>Anyara Privilege Entitlement (RM)<input type="number" id="fPrivilege" inputmode="decimal" placeholder="1808750"></label>
+            <label class="ro">Nett SPA price<output id="oNett">—</output></label>
+            <label class="ro">Nett price psf<output id="oPsf">—</output></label>
+          </fieldset>
+
+          <fieldset class="fs">
+            <legend>Bank financing illustration</legend>
+            <label>Margin of finance (%)<input type="number" id="fMof" inputmode="decimal" value="60" step="1"></label>
+            <label>Interest rate (% p.a.)<input type="number" id="fRate" inputmode="decimal" value="3.5" step="0.05"></label>
+            <label>Tenure (years)<input type="number" id="fTenure" inputmode="numeric" value="30" step="1"></label>
+            <label class="ro">Loan quantum<output id="oLoan">—</output></label>
+            <label class="ro">Down payment<output id="oDown">—</output></label>
+            <label class="ro accent">Indicative monthly instalment<output id="oMonthly">—</output></label>
+          </fieldset>
+
+          <fieldset class="fs fs-wide">
+            <legend>Sanctuary privileges</legend>
+            <div id="privRows"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnAddPriv">+ Add a privilege</button>
+          </fieldset>
+
+          <fieldset class="fs fs-wide">
+            <legend>Validity</legend>
+            <label class="inline-lab">Valid for
+              <input type="number" id="fValidWeeks" value="2" min="1" step="1" class="tiny"> weeks from the date of visit
+            </label>
+            <label class="ro">Expires<output id="oExpiry">—</output></label>
+          </fieldset>
+        </div>
+
+        <div class="builder-actions">
+          <button class="btn btn-primary" data-goto="proposal">Present the Proposal</button>
+          <button class="btn btn-ghost" id="btnClearLot">Clear lot &amp; pricing</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- PROPOSAL ---------- -->
+    <section class="scene scene-proposal" data-scene="proposal">
+      <div class="proposal-toolbar no-print">
+        <button class="btn btn-ghost btn-sm" data-goto="builder">← Edit</button>
+        <button class="btn btn-primary btn-sm" id="btnPrint">Print / Save as PDF</button>
+      </div>
+
+      <article class="doc" id="proposalDoc">
+        <header class="doc-head">
+          <img src="assets/logo-black.png" alt="Anyara Hills" class="doc-logo">
+          <p class="doc-kicker">P R I V A T E &nbsp; S A N C T U A R Y</p>
+          <h1 class="doc-title">Sales Package Proposal</h1>
+          <p class="doc-sub">Prepared exclusively for your consideration</p>
+        </header>
+
+        <section class="doc-block">
+          <h2>Prepared for</h2>
+          <table class="doc-table doc-table-kv">
+            <tbody>
+              <tr><th>Name</th><td id="pGuest">—</td></tr>
+              <tr><th>Your Anyara Hills Advisor</th><td id="pAdvisor">—</td></tr>
+              <tr><th>Date of Visit</th><td id="pDate">—</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="doc-block">
+          <h2>Your lot &amp; pricing</h2>
+          <table class="doc-table doc-table-kv">
+            <tbody>
+              <tr><th>Lot No.</th><td id="pLot">—</td></tr>
+              <tr><th>Land Size</th><td id="pSize">—</td></tr>
+              <tr><th>List Price</th><td id="pList">—</td></tr>
+              <tr class="is-credit"><th>Anyara Privilege Entitlement</th><td id="pPriv">—</td></tr>
+              <tr class="is-total"><th>Nett SPA Price</th><td id="pNett">—</td></tr>
+              <tr><th>Nett Price (PSF)</th><td id="pPsf">—</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="doc-block">
+          <h2>Your sanctuary privileges</h2>
+          <table class="doc-table">
+            <thead><tr><th>Privilege</th><th>Detail</th><th class="ta-r">Value</th></tr></thead>
+            <tbody id="pPrivBody"></tbody>
+          </table>
+          <p class="doc-fine">Stated maintenance value is the total waived cost across the full 10-year period.</p>
+        </section>
+
+        <section class="doc-block">
+          <h2>Your payment options</h2>
+          <p class="doc-lead">We recommend structuring your purchase through panel bank financing for the greatest flexibility.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>Structure</th><th class="ta-r">Nett Price</th></tr></thead>
+            <tbody>
+              <tr><td>1. Standard Terms</td><td>Payment per the standard Sale and Purchase Agreement schedule</td><td class="ta-r" id="pOpt1">—</td></tr>
+              <tr><td>2. Bank Financing</td><td>Financed via our panel banks, subject to your eligibility and bank approval</td><td class="ta-r" id="pOpt2">—</td></tr>
+            </tbody>
+          </table>
+          <p class="doc-fine">Additional payment structures may be available on request. Please speak with your Anyara Hills Advisor.</p>
+
+          <h3 class="doc-h3">Indicative monthly instalment (bank financing)</h3>
+          <table class="doc-table doc-table-kv">
+            <tbody>
+              <tr><th id="pLoanLabel">Loan Quantum</th><td id="pLoan">—</td></tr>
+              <tr><th id="pDownLabel">Down Payment</th><td id="pDown">—</td></tr>
+              <tr><th>Interest Rate</th><td id="pRate">—</td></tr>
+              <tr><th>Loan Tenure</th><td id="pTenure">—</td></tr>
+              <tr class="is-total"><th>Indicative Monthly Instalment</th><td id="pMonthly">—</td></tr>
+            </tbody>
+          </table>
+          <p class="doc-fine">This illustration is indicative only, based on a standard amortising schedule. Your
+          actual margin of finance, interest rate and approved loan quantum will be subject to your credit
+          assessment and approval by the respective panel bank.</p>
+        </section>
+
+        <section class="doc-block doc-validity">
+          <h2>Proposal validity</h2>
+          <p id="pValidity">—</p>
+        </section>
+
+        <footer class="doc-foot">
+          <div>
+            <strong>Anyara Hills</strong><br>
+            KHK Land, Ground Floor, Tower 1, Avenue 3, The Horizon,<br>
+            Bangsar South, No 8 Jalan Kerinchi, 59200 Kuala Lumpur
+          </div>
+          <div class="ta-r">
+            +6019 660 6511<br>anyarahills.com<br>
+            <span class="doc-dev">Developed by KHK Land, under Goldhill Fortune Sdn Bhd</span>
+          </div>
+        </footer>
+      </article>
+    </section>
+
+    <!-- ---------- FAQ ---------- -->
+    <section class="scene scene-tool" data-scene="faq">
+      <header class="scene-head">
+        <span class="eyebrow">Advisor reference</span>
+        <h1>Questions</h1>
+        <p class="lede">Never guess at figures. If it isn't here, confirm and follow up.</p>
+      </header>
+      <div class="scene-body">
+        <input type="search" id="faqSearch" class="faq-search" placeholder="Search — tenure, security, maintenance, hub…">
+        <div id="faqList"></div>
+        <div class="panel panel-note">
+          <h3>When they ask, in the room</h3>
+          <dl class="qa" id="qaList"></dl>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ SESSION SHEET ============ -->
+<div class="sheet-scrim" id="sheetScrim" hidden></div>
+<aside class="sheet" id="sheet" hidden aria-label="Visit session">
+  <h2>This visit</h2>
+  <label>Guest name<input type="text" id="sGuest" placeholder="Guest name"></label>
+  <label>Advisor<input type="text" id="sAdvisor" placeholder="Your name"></label>
+  <label>Date of visit<input type="date" id="sDate"></label>
+  <div class="sheet-actions">
+    <button class="btn btn-primary" id="btnSheetDone">Done</button>
+    <button class="btn btn-danger-ghost" id="btnNewVisit">Start a new visit</button>
+  </div>
+  <p class="fine">Everything is stored on this iPad only. Starting a new visit clears the guest,
+  the notes and the lot pricing.</p>
+</aside>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
