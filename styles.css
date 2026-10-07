@@ -432,6 +432,21 @@ p{margin:0 0 14px;line-height:1.66}
 }
 .fs input.tiny{width:64px;text-align:center;font-size:16px}
 
+/* ---------- lot picker ---------- */
+.fs select{
+  width:100%;min-width:0;
+  font-family:var(--sans);font-size:16px;color:var(--ink);
+  text-transform:none;letter-spacing:normal;
+  border:0;border-bottom:1px solid var(--line);
+  background:transparent;padding:7px 2px;border-radius:0;
+  -webkit-appearance:none;appearance:none;
+}
+.fs select:focus{outline:none;border-bottom-color:var(--green-3);border-bottom-width:1.5px}
+.lot-status{
+  font-size:11.5px;color:var(--stone);margin:9px 0 0;line-height:1.5;
+}
+.lot-status.is-stale{color:var(--clay)}
+
 .priv-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr) minmax(0,.8fr) 34px;gap:12px;align-items:end;margin-top:16px}
 .priv-row label{margin-top:0}
 .priv-del{

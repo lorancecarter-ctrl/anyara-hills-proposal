@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anyara Hills — Pricing Admin</title>
+<meta name="theme-color" content="#0c2316">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+<!-- ===================== sign in ===================== -->
+<div class="gate" id="adminGate" hidden>
+  <div class="gate-wash"></div>
+  <form class="gate-card" id="adminSignIn" novalidate>
+    <img src="../assets/logo-black.png" alt="Anyara Hills" class="gate-logo">
+    <p class="gate-kicker">Pricing Admin</p>
+    <h1 class="gate-title">Sign in</h1>
+    <label>Email address
+      <input type="email" id="aEmail" autocomplete="username" inputmode="email"
+             autocapitalize="none" spellcheck="false" required>
+    </label>
+    <label>Password
+      <input type="password" id="aPass" autocomplete="current-password" required>
+    </label>
+    <p class="gate-err" id="aErr" hidden></p>
+    <button class="btn btn-primary gate-btn" type="submit" id="aSubmit">Sign in</button>
+    <p class="gate-fine">Admin accounts are created in the Supabase dashboard under
+    Authentication → Users, then promoted with the SQL in <code>supabase/schema.sql</code>.</p>
+  </form>
+</div>
+
+<!-- ===================== console ===================== -->
+<div class="admin" id="adminApp" hidden>
+
+  <header class="admin-head">
+    <div class="admin-brand">
+      <img src="../assets/logo-black.png" alt="Anyara Hills" class="admin-logo">
+      <span class="admin-title">Pricing Admin</span>
+    </div>
+    <div class="admin-who">
+      <span id="adminWho">—</span>
+      <button class="btn btn-ghost btn-sm" id="btnAdminSignOut">Sign out</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ---------- upload ---------- -->
+    <section class="card">
+      <h2>Upload the price list</h2>
+      <p class="card-lede">An Excel (<code>.xlsx</code>, <code>.xls</code>) or CSV file. The first
+      row must be the column headings. Lot numbers already in the system are updated; new ones are
+      added. Nothing is written until you review the summary and confirm.</p>
+
+      <div class="cols-help">
+        <table class="mini">
+          <thead><tr><th>Column</th><th>Required</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>Lot No</code></td><td>Yes</td><td>Unique. Also accepts <code>Lot</code>, <code>Lot Number</code>.</td></tr>
+            <tr><td><code>Land Size (sf)</code></td><td>Yes</td><td>Square feet. Also <code>Size</code>, <code>SF</code>, <code>Land Size</code>.</td></tr>
+            <tr><td><code>List Price</code></td><td>Yes</td><td>Ringgit. Also <code>Price</code>, <code>List Price (RM)</code>.</td></tr>
+            <tr><td><code>Privilege</code></td><td>No</td><td>Entitlement/discount. Defaults to 0. Also <code>Entitlement</code>, <code>Discount</code>.</td></tr>
+            <tr><td><code>Status</code></td><td>No</td><td>Available, Reserved, Booked or Sold. Defaults to Available.</td></tr>
+            <tr><td><code>Phase</code></td><td>No</td><td>Free text.</td></tr>
+            <tr><td><code>Notes</code></td><td>No</td><td>Free text.</td></tr>
+          </tbody>
+        </table>
+        <p class="card-fine">Nett price and price psf are calculated by the database — don't include
+        them. <a href="../docs/pricing-template.csv" download>Download a template</a>.</p>
+      </div>
+
+      <div class="drop" id="drop">
+        <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+        <button class="btn btn-primary" type="button" id="btnPick">Choose a file</button>
+        <span class="drop-or">or drag it here</span>
+        <span class="drop-name" id="dropName"></span>
+      </div>
+
+      <div id="parseMsg"></div>
+
+      <div id="preview" hidden>
+        <div class="summary" id="summary"></div>
+        <div id="issues"></div>
+        <div class="table-scroll">
+          <table class="data" id="previewTable"></table>
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="btnPublish">Publish to the app</button>
+          <button class="btn btn-ghost" id="btnCancel">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- current ---------- -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Current price list</h2>
+        <div class="card-head-actions">
+          <input type="search" id="lotSearch" class="faq-search admin-search" placeholder="Search lot no…">
+          <button class="btn btn-ghost btn-sm" id="btnRefresh">Refresh</button>
+        </div>
+      </div>
+      <p class="card-lede" id="lotsMeta">Loading…</p>
+      <div class="table-scroll">
+        <table class="data" id="lotsTable"></table>
+      </div>
+    </section>
+
+    <!-- ---------- history ---------- -->
+    <section class="card">
+      <h2>Import history</h2>
+      <div class="table-scroll">
+        <table class="data" id="importsTable"></table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="setup-warning" id="setupWarning" hidden>
+  <h1>Not connected yet</h1>
+  <p>Open <code>config.js</code> and fill in <code>SUPABASE_URL</code> and
+  <code>SUPABASE_ANON_KEY</code> from your Supabase project
+  (Project Settings → Data API), then run <code>supabase/schema.sql</code> in the SQL Editor.</p>
+  <p class="setup-fine">Full steps are in the README under “Backend setup”.</p>
+</div>
+
+<script src="../vendor/supabase.js"></script>
+<script src="../vendor/xlsx.js"></script>
+<script src="../config.js"></script>
+<script src="../lots.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

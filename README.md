@@ -4,11 +4,88 @@ An installable web app (PWA) for the Anyara Hills sales gallery. It runs fullscr
 home screen, works with no internet connection once installed, and keeps each visit's data on the
 iPad only — nothing is sent anywhere.
 
+## Backend setup (Supabase)
+
+Pricing lives in Supabase so an admin can update it without a developer. Until `config.js` is
+filled in the app runs standalone, with the device-local sign-in described further down — so it
+keeps working while you set this up.
+
+**1. Create the project.** At [supabase.com](https://supabase.com), create a project. Note the
+region — pick Singapore for Malaysian users.
+
+**2. Run the schema.** SQL Editor → New query → paste all of `supabase/schema.sql` → Run. It creates
+the `lots`, `profiles` and `price_imports` tables, the Row Level Security policies, and the trigger
+that gives every new auth user a profile. Re-running it is safe.
+
+**3. Turn off public sign-ups.** Authentication → Sign In / Providers → uncheck *Allow new users to
+sign up*. Accounts are created by you, not by whoever finds the URL.
+
+**4. Create your own account and promote it.** Authentication → Users → Add user (email + password).
+Then in the SQL Editor:
+
+```sql
+update public.profiles set role = 'admin', must_change_password = false
+where email = 'you@khkland.com';
+```
+
+**5. Connect the app.** Project Settings → Data API. Copy the URL and the **anon / public** key into
+`config.js`. Never put the `service_role` key there — it bypasses every policy and this file is
+served to browsers and committed to the repo.
+
+**6. Add the advisors.** Authentication → Users → Add user, one per advisor, with a starter password.
+They stay role `advisor` (read-only) and are forced to choose their own password at first sign-in.
+To revoke someone, delete them under Authentication → Users — they lose access on every device.
+
+### Who can do what
+
+| | Read pricing | Edit pricing |
+|---|---|---|
+| Not signed in | No | No |
+| `advisor` | Yes | No |
+| `admin` | Yes | Yes |
+
+Reading requires a login **by design**. The anon key ships inside the app and this repo is public, so
+anonymous read would publish your price list to anyone who found the key.
+
+### The admin console
+
+Open `/admin/` (e.g. `http://localhost:8080/admin/`) and sign in with your admin account.
+
+- **Upload the price list** — drag in an `.xlsx`, `.xls` or `.csv`. The parser finds the heading row
+  even with title rows above it, accepts common column aliases (`Lot`, `Lot Number`, `Size (SF)`,
+  `Price (RM)`, `Entitlement`…), and strips `RM` and thousands separators.
+- **Review before anything is written.** You get a summary (new / changed / unchanged / skipped),
+  a row-by-row preview marking each lot New or Updated, and a list of any rows it had to reject and
+  why. Nothing is saved until you press Publish.
+- **Publishing never deletes.** Lots absent from the file are left untouched and called out in the
+  preview. To take a lot off the list, set its status to `Sold` rather than removing the row.
+- **Nett price and psf are computed by the database**, so the admin console, the app and the
+  proposal can never disagree. Don't put them in the spreadsheet.
+- Every import is logged with the filename, counts and who ran it.
+
+Lot numbers keep their exact form — `036` and `203A` survive both CSV and Excel without losing
+leading zeros.
+
+A starting file is at `docs/pricing-template.csv`.
+
+### On the iPads
+
+Advisors get a **Choose a lot** dropdown in the builder that fills in size, list price and privilege.
+Typing figures by hand still works for anything not on the list. The price list is cached on each
+iPad after sign-in, so the gallery keeps working with the Wi-Fi off; when it's serving from cache the
+builder says so, with the date it last synced.
+
 ## Signing in
 
-The app opens on a sign-in screen. Advisors sign in with their **email address**; the default
-password is **`1234`**, and the app immediately forces them to set their own before it will let them
-through.
+The app opens on a sign-in screen, which works one of two ways depending on whether `config.js` is
+filled in.
+
+**With Supabase connected (recommended).** Advisors sign in with the email and starter password you
+created for them in the dashboard, and are forced to choose their own before the app opens. One
+account works on every iPad, and deleting the user revokes access everywhere.
+
+**Standalone, before Supabase is set up.** Accounts are created on the device itself. The default
+password is **`1234`**, and the app immediately forces a change.
 
 - First sign-in on a given iPad with `1234` creates the account on that device and goes straight to
   "Choose a password". The new password must be at least 8 characters and cannot be the default.
@@ -17,7 +94,10 @@ through.
 - Reloading mid-flow does not skip the forced change — an account still on the default always
   lands back on the change screen.
 
-### What this is and isn't
+### What the standalone mode is and isn't
+
+Everything below applies **only when Supabase is not connected**. With Supabase, accounts are real
+server-side accounts and none of these caveats hold.
 
 This is a **workflow gate, not security.** There is no server: accounts live in each iPad's
 `localStorage`. That means:

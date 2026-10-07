@@ -1,0 +1,139 @@
+/* Anyara Hills — pricing admin console.
+   Builds on the main stylesheet's palette and type. Desktop-first: this is a
+   back-office screen, used on a laptop rather than in the gallery. */
+
+.admin-body{background:var(--ivory);min-height:100vh}
+
+.admin{min-height:100vh;display:flex;flex-direction:column}
+
+.admin-head{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  padding:16px clamp(20px,4vw,44px);
+  background:var(--green);color:var(--ivory);
+}
+.admin-brand{display:flex;align-items:center;gap:16px}
+.admin-logo{width:92px;filter:brightness(0) invert(1)}
+.admin-title{
+  font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(244,243,235,.62);
+  padding-left:16px;border-left:1px solid rgba(244,243,235,.22);
+}
+.admin-who{display:flex;align-items:center;gap:14px;font-size:13px;color:rgba(244,243,235,.78)}
+.admin-who .btn-ghost{color:var(--ivory)}
+
+.admin-main{
+  flex:1;width:min(1180px,100%);margin:0 auto;
+  padding:clamp(22px,3vw,38px) clamp(20px,4vw,44px) 70px;
+  display:flex;flex-direction:column;gap:24px;
+}
+
+.card{
+  background:#fbfaf5;border:1px solid var(--line-soft);border-radius:5px;
+  padding:26px clamp(20px,2.4vw,30px) 30px;
+}
+.card h2{
+  font-family:var(--serif);font-weight:400;font-size:25px;
+  color:var(--green);margin:0 0 10px;
+}
+.card-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.card-head-actions{display:flex;align-items:center;gap:10px}
+.admin-search{margin-bottom:0;max-width:240px;padding:9px 16px;font-size:14px}
+.card-lede{font-size:14px;line-height:1.6;color:#4c524b;margin:0 0 18px;max-width:78ch}
+.card-fine{font-size:12.5px;color:var(--stone);margin:10px 0 0}
+.card code,.setup-warning code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.88em;background:rgba(12,35,22,.06);padding:1px 5px;border-radius:3px;
+}
+.card a{color:var(--green)}
+
+/* ---------- column help ---------- */
+.cols-help{margin-bottom:22px}
+.mini{width:100%;border-collapse:collapse;font-size:13px}
+.mini th,.mini td{
+  text-align:left;padding:8px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top;
+}
+.mini thead th{
+  font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--stone);font-weight:600;border-bottom:1px solid var(--line);
+}
+.mini td:first-child{white-space:nowrap}
+
+/* ---------- drop zone ---------- */
+.drop{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  border:1.5px dashed var(--sand);border-radius:5px;
+  padding:22px 24px;background:var(--ivory);
+  transition:border-color .18s var(--ease),background .18s var(--ease);
+}
+.drop.is-over{border-color:var(--green-3);background:#f0eee2}
+.drop-or{font-size:13.5px;color:var(--stone)}
+.drop-name{font-size:13.5px;color:var(--green);font-weight:500;word-break:break-all}
+
+/* ---------- messages ---------- */
+.msg{
+  border-radius:0 4px 4px 0;padding:13px 17px;margin:18px 0 0;
+  font-size:13.5px;line-height:1.6;
+}
+.msg ul{margin:8px 0 0;padding-left:18px}
+.msg li{margin-bottom:4px}
+.msg-ok{background:rgba(40,80,58,.1);border-left:2px solid var(--green-3);color:#2c4536}
+.msg-warn{background:rgba(162,121,90,.12);border-left:2px solid var(--clay);color:#5a4636}
+.msg-error{background:rgba(150,60,45,.1);border-left:2px solid #8c3b2c;color:#73301f}
+
+/* ---------- summary ---------- */
+.summary{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;
+  overflow:hidden;margin:22px 0 0;
+}
+.sum{background:var(--ivory);padding:16px 18px;display:flex;flex-direction:column;gap:5px}
+.sum-n{font-family:var(--serif);font-size:30px;line-height:1;color:var(--green)}
+.sum-l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone)}
+
+/* ---------- data tables ---------- */
+.table-scroll{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  margin-top:20px;border:1px solid var(--line-soft);border-radius:4px;
+}
+.data{width:100%;border-collapse:collapse;font-size:13px;background:var(--ivory)}
+.data th,.data td{
+  padding:9px 13px;text-align:left;white-space:nowrap;
+  border-bottom:1px solid var(--line-soft);
+}
+.data thead th{
+  position:sticky;top:0;background:#f0eee2;z-index:1;
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--stone);font-weight:600;
+}
+.data tbody tr:hover{background:#f4f2e7}
+.data .ta-r{text-align:right;font-variant-numeric:tabular-nums}
+.data-empty{
+  caption-side:bottom;text-align:left;padding:18px 14px;
+  font-size:13.5px;color:var(--stone);font-style:italic;
+}
+
+.status-available{color:var(--green-3);font-weight:500}
+.status-reserved{color:var(--clay)}
+.status-booked{color:var(--clay);font-weight:500}
+.status-sold{color:var(--stone)}
+
+.act-new{color:var(--green-3);font-weight:600}
+.act-changed{color:var(--clay);font-weight:600}
+.act-same{color:var(--stone)}
+
+.admin-actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+
+/* ---------- not configured ---------- */
+.setup-warning{
+  max-width:620px;margin:16vh auto;padding:0 28px;text-align:center;
+}
+.setup-warning h1{
+  font-family:var(--serif);font-weight:400;font-size:34px;color:var(--green);margin:0 0 16px;
+}
+.setup-warning p{font-size:15px;line-height:1.7;color:#4c524b}
+.setup-fine{font-size:13px;color:var(--stone)}
+
+@media (max-width:720px){
+  .admin-head{padding:14px 20px}
+  .card{padding:20px 18px 24px}
+}

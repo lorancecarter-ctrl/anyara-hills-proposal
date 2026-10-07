@@ -1,7 +1,7 @@
 /* Anyara Hills — offline cache.
    Bump CACHE when you change any app file, so iPads pick the new version up. */
 
-const CACHE = 'anyara-v3';
+const CACHE = 'anyara-v4';
 
 const SHELL = [
   './',
@@ -10,6 +10,9 @@ const SHELL = [
   './data.js',
   './auth.js',
   './app.js',
+  './config.js',
+  './lots.js',
+  './vendor/supabase.js',
   './manifest.webmanifest',
   './assets/logo-black.png',
   './assets/watermark-white.png',
@@ -35,9 +38,22 @@ self.addEventListener('activate', event => {
   );
 });
 
+// Only the app shell and web fonts are cacheable. Supabase REST and auth calls
+// must always hit the network — serving those from a cache would hand back a
+// stale price list, or a stale session.
+const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
+function isCacheable(url) {
+  if (FONT_HOSTS.includes(url.hostname)) return true;
+  if (url.origin !== self.location.origin) return false;   // Supabase, anything else
+  if (url.pathname.startsWith('/admin')) return false;      // back office stays live
+  return true;
+}
+
 self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
+  if (!isCacheable(new URL(req.url))) return;               // straight to the network
 
   // Navigations: network first, fall back to the cached shell when offline.
   if (req.mode === 'navigate') {

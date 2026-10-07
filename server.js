@@ -24,7 +24,8 @@ const TYPES = {
 
 http.createServer((req, res) => {
   let rel = decodeURIComponent(req.url.split('?')[0]);
-  if (rel === '/') rel = '/index.html';
+  if (rel.endsWith('/')) rel += 'index.html';          // '/' and '/admin/'
+  else if (!path.extname(rel)) rel += '/index.html';   // '/admin'
 
   const file = path.join(ROOT, path.normalize(rel));
   // never serve outside the project directory

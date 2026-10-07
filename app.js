@@ -328,8 +328,14 @@
 
     $('btnClearLot').addEventListener('click', function () {
       state.lot = ''; state.sf = ''; state.list = ''; state.privilege = '';
+      var sel = $('fLotPick');
+      if (sel) sel.value = '';
       syncFormFromState();
       onChange();
+    });
+
+    $('fLotPick').addEventListener('change', function () {
+      if (this.value) applyLot(this.value);
     });
   }
 
@@ -475,6 +481,71 @@
     save();
   }
 
+  /* ================= lot picker ================= */
+
+  var lots = [];
+
+  function renderLotPicker(result) {
+    lots = result.rows || [];
+    var wrap = $('lotPickWrap');
+    var sel = $('fLotPick');
+    var note = $('lotStatus');
+
+    if (!lots.length) {
+      wrap.hidden = true;
+      note.hidden = true;
+      return;
+    }
+
+    sel.textContent = '';
+    var blank = document.createElement('option');
+    blank.value = '';
+    blank.textContent = '— type the figures manually —';
+    sel.appendChild(blank);
+
+    lots.forEach(function (l) {
+      var o = document.createElement('option');
+      o.value = l.lot_no;
+      var nett = (l.nett_price !== null && l.nett_price !== undefined)
+        ? Number(l.nett_price) : (Number(l.list_price) - Number(l.privilege));
+      o.textContent = 'Lot ' + l.lot_no + ' · ' + rm(nett)
+        + (l.status && l.status !== 'Available' ? ' · ' + l.status : '');
+      if (l.status === 'Sold') o.disabled = true;
+      sel.appendChild(o);
+    });
+
+    if (state.lot) sel.value = state.lot;
+    wrap.hidden = false;
+
+    note.hidden = false;
+    note.textContent = lots.length + ' lots loaded'
+      + (result.source === 'cache'
+          ? ' from this iPad (offline — last synced ' + longDate((result.fetchedAt || '').slice(0, 10)) + ')'
+          : ' from the price list');
+    note.className = 'lot-status' + (result.source === 'cache' ? ' is-stale' : '');
+  }
+
+  function applyLot(lotNo) {
+    var l = lots.filter(function (x) { return x.lot_no === lotNo; })[0];
+    if (!l) return;
+    state.lot = l.lot_no;
+    state.sf = String(l.land_size_sf);
+    state.list = String(l.list_price);
+    state.privilege = String(l.privilege);
+    syncFormFromState();
+    onChange();
+  }
+
+  function loadLots() {
+    if (!window.Anyara || !window.Anyara.configured()) return;
+    window.Anyara.loadLots().then(renderLotPicker);
+  }
+
+  /* Called by auth.js once a Supabase sign-in completes. */
+  window.AnyaraApp = {
+    onSignedIn: function () { loadLots(); }
+  };
+
   /* ================= boot ================= */
 
   function init() {
@@ -507,6 +578,7 @@
 
     onChange();
     go('cover');
+    loadLots();
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {

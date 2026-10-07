@@ -34,8 +34,8 @@
     </label>
     <p class="gate-err" id="gErr" hidden></p>
     <button class="btn btn-primary gate-btn" type="submit" id="gSubmit">Sign in</button>
-    <p class="gate-fine">First time on this iPad? Sign in with the default password your sales
-    manager gave you — you'll be asked to set your own straight away.</p>
+    <p class="gate-fine" id="gateModeHint">First time on this iPad? Sign in with the default password
+    your sales manager gave you — you'll be asked to set your own straight away.</p>
   </form>
 
   <form class="gate-card" id="gateChange" hidden novalidate>
@@ -355,6 +355,12 @@
 
           <fieldset class="fs">
             <legend>The lot</legend>
+            <label class="lot-pick" id="lotPickWrap" hidden>Choose a lot
+              <select id="fLotPick">
+                <option value="">— type the figures manually —</option>
+              </select>
+            </label>
+            <p class="lot-status" id="lotStatus" hidden></p>
             <label>Lot number<input type="text" id="fLot" placeholder="e.g. 036"></label>
             <label>Land size (sf)<input type="number" id="fSf" inputmode="decimal" placeholder="43953"></label>
             <label class="ro">Land size (acres)<output id="oAcres">—</output></label>
@@ -536,6 +542,9 @@
   </div>
 </aside>
 
+<script src="vendor/supabase.js"></script>
+<script src="config.js"></script>
+<script src="lots.js"></script>
 <script src="data.js"></script>
 <script src="auth.js"></script>
 <script src="app.js"></script>

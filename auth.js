@@ -304,12 +304,128 @@
     showPane('signin');
   }
 
+  /* ================= Supabase mode =================
+   * Used whenever config.js is filled in. Accounts then live on the server, so
+   * one login works on every iPad and can be revoked centrally. Without config
+   * we fall back to the device-local store above, so the app still runs.
+   */
+
+  function remoteEnabled() {
+    return !!(window.Anyara && window.Anyara.configured() && window.Anyara.supabase());
+  }
+
+  function remoteSignIn(e) {
+    e.preventDefault();
+    var email = normalise($('gEmail').value);
+    var password = $('gPass').value;
+    showError('gErr', '');
+
+    if (!looksLikeEmail(email)) { showError('gErr', 'Enter a valid email address.'); return; }
+    if (!password) { showError('gErr', 'Enter your password.'); return; }
+
+    var btn = $('gSubmit');
+    btn.disabled = true;
+
+    window.Anyara.signIn(email, password).then(function (res) {
+      btn.disabled = false;
+      if (res.error) {
+        showError('gErr', /Invalid login/i.test(res.error.message)
+          ? 'That email and password do not match an account.'
+          : res.error.message);
+        return;
+      }
+      $('gPass').value = '';
+      return afterRemoteAuth();
+    }).catch(function (ex) {
+      btn.disabled = false;
+      showError('gErr', ex.message || String(ex));
+    });
+  }
+
+  function afterRemoteAuth() {
+    return window.Anyara.myProfile().then(function (profile) {
+      if (!profile) { showPane('signin'); return; }
+      pendingEmail = profile.email;
+      if (profile.must_change_password) {
+        $('gNew').value = ''; $('gConfirm').value = '';
+        showError('gChangeErr', '');
+        $('gChangeLede').textContent =
+          'This account is still on the password your admin set. Choose your own before you continue.';
+        showPane('change');
+        return;
+      }
+      enterApp(profile.email);
+      if (window.AnyaraApp && window.AnyaraApp.onSignedIn) window.AnyaraApp.onSignedIn(profile);
+    });
+  }
+
+  function remoteChange(e) {
+    e.preventDefault();
+    var next = $('gNew').value;
+    var confirm = $('gConfirm').value;
+    showError('gChangeErr', '');
+
+    if (next.length < MIN_LENGTH) { showError('gChangeErr', 'Use at least ' + MIN_LENGTH + ' characters.'); return; }
+    if (next === DEFAULT_PASSWORD) { showError('gChangeErr', 'Choose something other than the default password.'); return; }
+    if (next !== confirm) { showError('gChangeErr', 'Those two do not match.'); return; }
+
+    var btn = $('gChangeSubmit');
+    btn.disabled = true;
+
+    window.Anyara.updatePassword(next).then(function (res) {
+      if (res.error) throw res.error;
+      var sb = window.Anyara.supabase();
+      return sb.auth.getUser().then(function (u) {
+        return sb.from('profiles')
+          .update({ must_change_password: false })
+          .eq('id', u.data.user.id);
+      });
+    }).then(function () {
+      btn.disabled = false;
+      $('gNew').value = ''; $('gConfirm').value = '';
+      enterApp(pendingEmail);
+      if (window.AnyaraApp && window.AnyaraApp.onSignedIn) {
+        window.AnyaraApp.onSignedIn({ email: pendingEmail });
+      }
+    }).catch(function (ex) {
+      btn.disabled = false;
+      showError('gChangeErr', ex.message || String(ex));
+    });
+  }
+
+  function remoteSignOut() {
+    window.Anyara.signOut().then(function () {
+      $('gEmail').value = ''; $('gPass').value = '';
+      showError('gErr', '');
+      showPane('signin');
+    });
+  }
+
+  /* ================= boot ================= */
+
   function init() {
-    $('gateSignIn').addEventListener('submit', handleSignIn);
-    $('gateChange').addEventListener('submit', handleChange);
+    var remote = remoteEnabled();
+
+    $('gateSignIn').addEventListener('submit', remote ? remoteSignIn : handleSignIn);
+    $('gateChange').addEventListener('submit', remote ? remoteChange : handleChange);
 
     var out = $('btnSignOut');
-    if (out) out.addEventListener('click', signOut);
+    if (out) out.addEventListener('click', remote ? remoteSignOut : signOut);
+
+    var hint = $('gateModeHint');
+    if (hint) {
+      hint.textContent = remote
+        ? 'Your Anyara Hills account works on any gallery iPad.'
+        : 'First time on this iPad? Sign in with the default password your sales manager gave you — you’ll be asked to set your own straight away.';
+    }
+
+    if (remote) {
+      window.Anyara.currentSession().then(function (s) {
+        if (!s) { showPane('signin'); return; }
+        return afterRemoteAuth();
+      }).catch(function () { showPane('signin'); });
+      return;
+    }
 
     var s = session();
     var rec = s ? accounts()[s.email] : null;
