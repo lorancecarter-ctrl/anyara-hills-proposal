@@ -17,6 +17,45 @@
 </head>
 <body>
 
+<!-- ============ SIGN-IN GATE ============ -->
+<div class="gate" id="gate" hidden>
+  <div class="gate-wash"></div>
+
+  <form class="gate-card" id="gateSignIn" novalidate>
+    <img src="assets/logo-black.png" alt="Anyara Hills" class="gate-logo">
+    <p class="gate-kicker">Sales Gallery</p>
+    <h1 class="gate-title">Sign in</h1>
+    <label>Email address
+      <input type="email" id="gEmail" autocomplete="username" inputmode="email"
+             autocapitalize="none" spellcheck="false" required>
+    </label>
+    <label>Password
+      <input type="password" id="gPass" autocomplete="current-password" required>
+    </label>
+    <p class="gate-err" id="gErr" hidden></p>
+    <button class="btn btn-primary gate-btn" type="submit" id="gSubmit">Sign in</button>
+    <p class="gate-fine">First time on this iPad? Sign in with the default password your sales
+    manager gave you — you'll be asked to set your own straight away.</p>
+  </form>
+
+  <form class="gate-card" id="gateChange" hidden novalidate>
+    <img src="assets/logo-black.png" alt="Anyara Hills" class="gate-logo">
+    <p class="gate-kicker">Sales Gallery</p>
+    <h1 class="gate-title">Choose a password</h1>
+    <p class="gate-lede" id="gChangeLede">Set your own before you continue.</p>
+    <label>New password
+      <input type="password" id="gNew" autocomplete="new-password" required>
+    </label>
+    <label>Confirm new password
+      <input type="password" id="gConfirm" autocomplete="new-password" required>
+    </label>
+    <p class="gate-err" id="gChangeErr" hidden></p>
+    <button class="btn btn-primary gate-btn" type="submit" id="gChangeSubmit">Save and continue</button>
+    <p class="gate-fine">At least 8 characters, and not the default. Stored on this iPad only —
+    if you forget it, your manager can reset this iPad's accounts.</p>
+  </form>
+</div>
+
 <div id="app">
 
   <!-- ============ NAV RAIL ============ -->
@@ -489,9 +528,16 @@
   </div>
   <p class="fine">Everything is stored on this iPad only. Starting a new visit clears the guest,
   the notes and the lot pricing.</p>
+
+  <div class="sheet-account">
+    <span class="sheet-account-k">Signed in as</span>
+    <span class="sheet-account-v" id="sessionWho">—</span>
+    <button class="btn btn-ghost btn-sm" id="btnSignOut" hidden>Sign out</button>
+  </div>
 </aside>
 
 <script src="data.js"></script>
+<script src="auth.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

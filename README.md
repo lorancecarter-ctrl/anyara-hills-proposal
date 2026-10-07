@@ -4,6 +4,42 @@ An installable web app (PWA) for the Anyara Hills sales gallery. It runs fullscr
 home screen, works with no internet connection once installed, and keeps each visit's data on the
 iPad only — nothing is sent anywhere.
 
+## Signing in
+
+The app opens on a sign-in screen. Advisors sign in with their **email address**; the default
+password is **`1234`**, and the app immediately forces them to set their own before it will let them
+through.
+
+- First sign-in on a given iPad with `1234` creates the account on that device and goes straight to
+  "Choose a password". The new password must be at least 8 characters and cannot be the default.
+- After that, only the new password works. `1234` is rejected.
+- The session persists across reloads and app restarts. **Session → Sign out** ends it.
+- Reloading mid-flow does not skip the forced change — an account still on the default always
+  lands back on the change screen.
+
+### What this is and isn't
+
+This is a **workflow gate, not security.** There is no server: accounts live in each iPad's
+`localStorage`. That means:
+
+- **Accounts are per-device.** An advisor who signs in on iPad A has no account on iPad B — they'd
+  sign in there with `1234` again and set a password for that device. There is no central user list.
+- **Any email address works** for a first sign-in on a fresh device, because nothing can check it
+  against a directory.
+- **Anyone with the unlocked iPad and a browser debugger can read the stored data**, including the
+  visit notes and pricing. The gate stops a guest picking up an unattended iPad mid-viewing; it does
+  not protect the pricing data from someone determined.
+- **A forgotten password cannot be recovered** — there's no reset email. Clear the app's site data
+  (or Safari → Clear History and Website Data) and the advisor signs in with `1234` again. That also
+  clears any saved visit.
+
+Passwords are never stored in the clear. On HTTPS or localhost the app uses PBKDF2-SHA256 at 150,000
+iterations via WebCrypto; on a plain-http LAN address, where `crypto.subtle` is unavailable, it falls
+back to a salted SHA-256 iterated 5,000 times. Both store only a salt and a hash.
+
+If you ever need real access control — a central user list, revoking one person, or an audit trail of
+who quoted what — that needs a backend, and it's a different piece of work.
+
 ## What's in it
 
 **Pitch flow** — presented left to right from the nav rail:
@@ -97,3 +133,5 @@ footage, so it shows 1.009. Confirm which figure is correct before this goes to 
   margin of finance as inputs rather than hard-coding them, and the screen carries the etiquette
   guide's warning to confirm current figures with the sales manager before quoting.
 - Visit data lives in `localStorage` on each iPad. "Start a new visit" in the Session panel clears it.
+- The sign-in gate is device-local and is not a security boundary — see **Signing in** above for what
+  it does and does not protect.
