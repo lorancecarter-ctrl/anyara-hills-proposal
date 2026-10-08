@@ -2,3 +2,9 @@
 node_modules/
 .DS_Store
 Thumbs.db
+
+# never commit real price lists — this repo is public
+docs/_test-*
+*.xlsx
+*.xls
+!docs/pricing-template.csv

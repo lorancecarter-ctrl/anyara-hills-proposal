@@ -69,6 +69,33 @@
 .drop-or{font-size:13.5px;color:var(--stone)}
 .drop-name{font-size:13.5px;color:var(--green);font-weight:500;word-break:break-all}
 
+/* ---------- sheet + column mapping ---------- */
+.sheet-pick{
+  display:flex;align-items:center;gap:12px;margin-top:20px;
+  font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone);
+}
+.sheet-pick select,.map-field select{
+  font-family:var(--sans);font-size:14.5px;color:var(--ink);
+  text-transform:none;letter-spacing:normal;
+  border:1px solid var(--line);border-radius:4px;background:var(--ivory);
+  padding:8px 11px;min-width:0;max-width:100%;
+}
+.sheet-pick select:focus,.map-field select:focus{outline:none;border-color:var(--green-3)}
+
+.map-title{
+  font-family:var(--serif);font-weight:400;font-size:20px;
+  color:var(--green);margin:26px 0 4px;
+}
+.map-head{margin-bottom:14px}
+.map-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));
+  gap:14px;margin-bottom:6px;
+}
+.map-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.map-name{
+  font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);
+}
+
 /* ---------- messages ---------- */
 .msg{
   border-radius:0 4px 4px 0;padding:13px 17px;margin:18px 0 0;

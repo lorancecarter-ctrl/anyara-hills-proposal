@@ -65,14 +65,19 @@
             <tr><td><code>Lot No</code></td><td>Yes</td><td>Unique. Also accepts <code>Lot</code>, <code>Lot Number</code>.</td></tr>
             <tr><td><code>Land Size (sf)</code></td><td>Yes</td><td>Square feet. Also <code>Size</code>, <code>SF</code>, <code>Land Size</code>.</td></tr>
             <tr><td><code>List Price</code></td><td>Yes</td><td>Ringgit. Also <code>Price</code>, <code>List Price (RM)</code>.</td></tr>
-            <tr><td><code>Privilege</code></td><td>No</td><td>Entitlement/discount. Defaults to 0. Also <code>Entitlement</code>, <code>Discount</code>.</td></tr>
+            <tr><td><code>SPA Price</code></td><td>Either</td><td>The nett price. Privilege is worked out as list − SPA.</td></tr>
+            <tr><td><code>Privilege</code></td><td>Either</td><td>Entitlement/discount, if your sheet states it directly instead of an SPA price.</td></tr>
             <tr><td><code>Status</code></td><td>No</td><td>Available, Reserved, Booked or Sold. Defaults to Available.</td></tr>
             <tr><td><code>Phase</code></td><td>No</td><td>Free text.</td></tr>
+            <tr><td><code>Category</code></td><td>No</td><td>Signature, Premium, Private — free text.</td></tr>
             <tr><td><code>Notes</code></td><td>No</td><td>Free text.</td></tr>
           </tbody>
         </table>
         <p class="card-fine">Nett price and price psf are calculated by the database — don't include
         them. <a href="../docs/pricing-template.csv" download>Download a template</a>.</p>
+        <p class="card-fine"><strong>Revision sheets:</strong> if the file carries both the superseded
+        and the revised prices under the same heading, the mapping below shows which column was picked
+        and lets you change it. Always check it before publishing.</p>
       </div>
 
       <div class="drop" id="drop">
@@ -82,7 +87,16 @@
         <span class="drop-name" id="dropName"></span>
       </div>
 
+      <label class="sheet-pick" id="sheetWrap" hidden>Sheet
+        <select id="sheetSelect"></select>
+      </label>
+
       <div id="parseMsg"></div>
+
+      <div id="mapperWrap" hidden>
+        <h3 class="map-title">Column mapping</h3>
+        <div id="mapper"></div>
+      </div>
 
       <div id="preview" hidden>
         <div class="summary" id="summary"></div>

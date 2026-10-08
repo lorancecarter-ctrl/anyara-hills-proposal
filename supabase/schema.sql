@@ -70,6 +70,7 @@ create table if not exists public.lots (
   id             uuid primary key default gen_random_uuid(),
   lot_no         text not null unique,
   phase          text,
+  category       text,
   land_size_sf   numeric(12,2) not null check (land_size_sf > 0),
   list_price     numeric(14,2) not null check (list_price >= 0),
   privilege      numeric(14,2) not null default 0 check (privilege >= 0),
@@ -87,6 +88,9 @@ create table if not exists public.lots (
 
   constraint privilege_not_above_list check (privilege <= list_price)
 );
+
+-- for projects created before this column existed
+alter table public.lots add column if not exists category text;
 
 create index if not exists lots_status_idx on public.lots (status);
 create index if not exists lots_lot_no_idx  on public.lots (lot_no);
