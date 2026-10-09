@@ -1,7 +1,7 @@
 /* Anyara Hills — offline cache.
    Bump CACHE when you change any app file, so iPads pick the new version up. */
 
-const CACHE = 'anyara-v7';
+const CACHE = 'anyara-v8';
 
 const SHELL = [
   './',

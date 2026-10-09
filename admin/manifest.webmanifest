@@ -1,0 +1,16 @@
+{
+  "name": "Anyara Hills — Pricing Admin",
+  "short_name": "Anyara Admin",
+  "description": "Update the Anyara Hills lot price list from a spreadsheet.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f3eb",
+  "theme_color": "#0c2316",
+  "icons": [
+    { "src": "../assets/icon-admin-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "../assets/icon-admin-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../assets/icon-admin-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "../assets/icon-admin-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

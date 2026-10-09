@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Anyara Hills — Pricing Admin</title>
 <meta name="theme-color" content="#0c2316">
-<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Anyara Admin">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../assets/icon-admin-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap">
@@ -81,7 +85,9 @@
       </div>
 
       <div class="drop" id="drop">
-        <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+        <!-- MIME types as well as extensions: iOS greys out files otherwise -->
+        <input type="file" id="file" hidden
+               accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/comma-separated-values">
         <button class="btn btn-primary" type="button" id="btnPick">Choose a file</button>
         <span class="drop-or">or drag it here</span>
         <span class="drop-name" id="dropName"></span>
