@@ -4,37 +4,60 @@ An installable web app (PWA) for the Anyara Hills sales gallery. It runs fullscr
 home screen, works with no internet connection once installed, and keeps each visit's data on the
 iPad only — nothing is sent anywhere.
 
-## Backend setup (Supabase)
+## Backend (Supabase) — connected
 
-Pricing lives in Supabase so an admin can update it without a developer. Until `config.js` is
-filled in the app runs standalone, with the device-local sign-in described further down — so it
-keeps working while you set this up.
+Project `onnzgykuumuvfsnestrc` (region ap-southeast-2). The schema is applied and `config.js` is
+wired to it, so the app talks to the live database already.
 
-**1. Create the project.** At [supabase.com](https://supabase.com), create a project. Note the
-region — pick Singapore for Malaysian users.
+Done:
 
-**2. Run the schema.** SQL Editor → New query → paste all of `supabase/schema.sql` → Run. It creates
-the `lots`, `profiles` and `price_imports` tables, the Row Level Security policies, and the trigger
-that gives every new auth user a profile. Re-running it is safe.
+- `lots`, `profiles` and `price_imports` tables, with Row Level Security.
+- The trigger that gives every new auth user a profile.
+- `config.js` pointing at the project with the publishable key.
+- Function hardening — `search_path` pinned, and the helper functions no longer exposed over REST
+  to anonymous callers.
 
-**3. Turn off public sign-ups.** Authentication → Sign In / Providers → uncheck *Allow new users to
-sign up*. Accounts are created by you, not by whoever finds the URL.
+### Remaining, and only you can do these
 
-**4. Create your own account and promote it.** Authentication → Users → Add user (email + password).
-Then in the SQL Editor:
+**1. Create your admin account.** Dashboard → Authentication → Users → **Add user**, with your email
+and a password. Then SQL Editor:
 
 ```sql
 update public.profiles set role = 'admin', must_change_password = false
 where email = 'you@khkland.com';
 ```
 
-**5. Connect the app.** Project Settings → Data API. Copy the URL and the **anon / public** key into
-`config.js`. Never put the `service_role` key there — it bypasses every policy and this file is
-served to browsers and committed to the repo.
+**2. Turn off public sign-ups.** Authentication → Sign In / Providers → uncheck *Allow new users to
+sign up*. Otherwise anyone who finds the URL can create themselves an advisor account and read the
+price list.
 
-**6. Add the advisors.** Authentication → Users → Add user, one per advisor, with a starter password.
-They stay role `advisor` (read-only) and are forced to choose their own password at first sign-in.
-To revoke someone, delete them under Authentication → Users — they lose access on every device.
+**3. Turn on leaked-password protection.** Authentication → Policies → enable the HaveIBeenPwned
+check. Supabase's own linter flags this as off.
+
+**4. Add the advisors.** Authentication → Users → Add user, one per advisor, with a starter password.
+They stay role `advisor` (read-only) and must choose their own password at first sign-in. To revoke
+someone, delete them under Authentication → Users — they lose access on every device at once.
+
+### Is it safe that `config.js` is in a public repo?
+
+Yes, and this was tested rather than assumed. The publishable key identifies the project; it grants
+nothing on its own. With a row present in `lots`, an anonymous request returns an empty array:
+
+```
+curl "https://onnzgykuumuvfsnestrc.supabase.co/rest/v1/lots?select=*" -H "apikey: <publishable key>"
+→ []            # the row exists, RLS hides it
+```
+
+An anonymous insert is refused outright with `42501 new row violates row-level security policy`.
+Both the publishable key and the legacy anon key behave the same way.
+
+The **`service_role`** key is the dangerous one — it bypasses every policy. It is not in this repo
+and must never be put in `config.js`.
+
+### Changing the Supabase settings later
+
+`config.js` is cached by the service worker, so after editing it bump `CACHE` in `sw.js` or the
+iPads will keep using the old connection details.
 
 ### Who can do what
 

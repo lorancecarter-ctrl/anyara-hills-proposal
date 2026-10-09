@@ -96,7 +96,11 @@ create index if not exists lots_status_idx on public.lots (status);
 create index if not exists lots_lot_no_idx  on public.lots (lot_no);
 
 create or replace function public.touch_lot()
-returns trigger language plpgsql as $$
+returns trigger
+language plpgsql
+security invoker
+set search_path = public          -- pinned: an unset search_path is a lint failure
+as $$
 begin
   new.updated_at := now();
   new.updated_by := auth.uid();
@@ -170,6 +174,22 @@ create policy imports_admin on public.price_imports
   for all to authenticated
   using (public.is_admin())
   with check (public.is_admin());
+
+-- ------------------------------------------------------- function grants --
+--
+-- Both helpers live in the `public` schema, so PostgREST exposes them at
+-- /rest/v1/rpc/... unless EXECUTE is revoked.
+
+-- A trigger function has no business being callable over the API. The owner
+-- keeps EXECUTE, so the auth.users trigger still fires.
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+
+-- is_admin() must stay callable by `authenticated`: the RLS policies evaluate
+-- it as the querying role, so revoking it there would break every write policy.
+-- It only reports whether the caller themselves is an admin, which that caller
+-- already knows. Anonymous visitors have no reason to call it.
+revoke execute on function public.is_admin() from public, anon;
+grant  execute on function public.is_admin() to authenticated;
 
 -- ------------------------------------------------------------------ setup --
 --

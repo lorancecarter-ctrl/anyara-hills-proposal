@@ -13,6 +13,6 @@
  * file is served to the browser and committed to the repo.
  */
 window.ANYARA_CONFIG = {
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: ''
+  SUPABASE_URL: 'https://onnzgykuumuvfsnestrc.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_rMcFcYdulYse22lyLxHzIQ_k_t4Pe2l'
 };
