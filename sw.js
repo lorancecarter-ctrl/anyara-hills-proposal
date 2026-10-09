@@ -1,7 +1,7 @@
 /* Anyara Hills — offline cache.
    Bump CACHE when you change any app file, so iPads pick the new version up. */
 
-const CACHE = 'anyara-v6';
+const CACHE = 'anyara-v7';
 
 const SHELL = [
   './',
@@ -46,7 +46,9 @@ const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 function isCacheable(url) {
   if (FONT_HOSTS.includes(url.hostname)) return true;
   if (url.origin !== self.location.origin) return false;   // Supabase, anything else
-  if (url.pathname.startsWith('/admin')) return false;      // back office stays live
+  // back office stays live. `includes`, not `startsWith` — on GitHub Pages and
+  // similar the app is served under a subpath, e.g. /anyara-hills-proposal/admin/
+  if (url.pathname.indexOf('/admin') !== -1) return false;
   return true;
 }
 
