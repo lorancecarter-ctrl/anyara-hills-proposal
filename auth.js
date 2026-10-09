@@ -178,6 +178,53 @@
   function normalise(email) { return String(email || '').trim().toLowerCase(); }
   function looksLikeEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 
+  /* ================= password quality =================
+   * Supabase's HaveIBeenPwned check is a Pro-plan feature, so the obvious
+   * rubbish is rejected here instead. Not a substitute for a breach database —
+   * it just stops the handful of passwords people actually reach for first.
+   */
+
+  var COMMON = [
+    'password', 'password1', 'password123', 'passw0rd', '12345678', '123456789',
+    '1234567890', 'qwertyui', 'qwerty123', 'iloveyou', 'princess', 'football',
+    'baseball', 'sunshine', 'trustno1', 'superman', 'whatever', 'welcome1',
+    'admin123', 'letmein1', 'abc12345', 'monkey123', 'anyara', 'anyarahills',
+    'anyara123', 'khkland', 'goldhill', 'salesteam', 'changeme', 'default1'
+  ];
+
+  function passwordProblem(pw, email) {
+    if (pw.length < MIN_LENGTH) return 'Use at least ' + MIN_LENGTH + ' characters.';
+    if (pw === DEFAULT_PASSWORD) return 'Choose something other than the default password.';
+
+    var low = pw.toLowerCase();
+    if (COMMON.indexOf(low) !== -1) return 'That is one of the most commonly used passwords. Choose another.';
+
+    // the project name with trivial padding is the obvious guess here
+    if (/^(anyara|khkland|goldhill)\W*\d*$/i.test(pw)) {
+      return 'Avoid the project or company name on its own.';
+    }
+
+    var local = String(email || '').split('@')[0].toLowerCase();
+    if (local && local.length > 2 && low.indexOf(local) !== -1) {
+      return 'Do not build the password out of your email address.';
+    }
+
+    if (/^(.)\1+$/.test(pw)) return 'That is the same character repeated. Choose another.';
+    if (/^(0123456789|1234567890|abcdefgh|qwertyuiop)/i.test(pw)) {
+      return 'That is a keyboard or number run. Choose another.';
+    }
+
+    // some variety, without demanding a symbol zoo
+    var classes = 0;
+    if (/[a-z]/.test(pw)) classes++;
+    if (/[A-Z]/.test(pw)) classes++;
+    if (/[0-9]/.test(pw)) classes++;
+    if (/[^A-Za-z0-9]/.test(pw)) classes++;
+    if (classes < 2) return 'Mix at least two of: lower case, upper case, numbers, symbols.';
+
+    return null;
+  }
+
   /* ================= UI ================= */
 
   var pendingEmail = null;
@@ -267,14 +314,8 @@
     var confirm = $('gConfirm').value;
     showError('gChangeErr', '');
 
-    if (next.length < MIN_LENGTH) {
-      showError('gChangeErr', 'Use at least ' + MIN_LENGTH + ' characters.');
-      return;
-    }
-    if (next === DEFAULT_PASSWORD) {
-      showError('gChangeErr', 'Choose something other than the default password.');
-      return;
-    }
+    var problem = passwordProblem(next, pendingEmail);
+    if (problem) { showError('gChangeErr', problem); return; }
     if (next !== confirm) { showError('gChangeErr', 'Those two do not match.'); return; }
 
     var btn = $('gChangeSubmit');
@@ -365,8 +406,8 @@
     var confirm = $('gConfirm').value;
     showError('gChangeErr', '');
 
-    if (next.length < MIN_LENGTH) { showError('gChangeErr', 'Use at least ' + MIN_LENGTH + ' characters.'); return; }
-    if (next === DEFAULT_PASSWORD) { showError('gChangeErr', 'Choose something other than the default password.'); return; }
+    var problem = passwordProblem(next, pendingEmail);
+    if (problem) { showError('gChangeErr', problem); return; }
     if (next !== confirm) { showError('gChangeErr', 'Those two do not match.'); return; }
 
     var btn = $('gChangeSubmit');

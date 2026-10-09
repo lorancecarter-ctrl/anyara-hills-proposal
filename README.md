@@ -31,8 +31,15 @@ where email = 'you@khkland.com';
 sign up*. Otherwise anyone who finds the URL can create themselves an advisor account and read the
 price list.
 
-**3. Turn on leaked-password protection.** Authentication → Policies → enable the HaveIBeenPwned
-check. Supabase's own linter flags this as off.
+**3. Password quality — nothing to do.** Supabase's HaveIBeenPwned check is a **Pro-plan feature**,
+so it stays off on the free tier and its linter warning is expected. The app compensates in
+`auth.js`: a new password must be at least 8 characters, mix two of (lower, upper, digit, symbol),
+and is rejected if it is the default, a common password, the project or company name, built from the
+user's own email address, a repeated character, or a keyboard run. That is not a breach database,
+but it stops what people actually type first.
+
+Free-tier settings worth setting anyway, under Authentication → Sign In / Providers → Password
+settings: **minimum length 8** to match the app, and required character types if offered.
 
 **4. Add the advisors.** Authentication → Users → Add user, one per advisor, with a starter password.
 They stay role `advisor` (read-only) and must choose their own password at first sign-in. To revoke
