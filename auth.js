@@ -436,6 +436,41 @@
     });
   }
 
+  function remoteForgot() {
+    var email = normalise($('gEmail').value);
+    showError('gErr', '');
+    $('gNote').hidden = true;
+
+    if (!looksLikeEmail(email)) {
+      showError('gErr', 'Type your email address above first, then tap this again.');
+      $('gEmail').focus();
+      return;
+    }
+
+    var btn = $('gForgot');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    window.Anyara.resetPassword(email).then(function (res) {
+      btn.disabled = false;
+      btn.textContent = 'Forgot your password?';
+      if (res && res.error) {
+        // rate limiting is the common one, and the message is worth showing as-is
+        showError('gErr', res.error.message);
+        return;
+      }
+      // deliberately the same message whether or not the address exists —
+      // otherwise this becomes a way to discover who has an account
+      $('gNote').textContent = 'If ' + email + ' has an account, a reset link is on its way. '
+        + 'It expires in an hour. Check the spam folder.';
+      $('gNote').hidden = false;
+    }).catch(function (ex) {
+      btn.disabled = false;
+      btn.textContent = 'Forgot your password?';
+      showError('gErr', ex.message || String(ex));
+    });
+  }
+
   function remoteSignOut() {
     window.Anyara.signOut().then(function () {
       $('gEmail').value = ''; $('gPass').value = '';
@@ -454,6 +489,13 @@
 
     var out = $('btnSignOut');
     if (out) out.addEventListener('click', remote ? remoteSignOut : signOut);
+
+    // only meaningful with a server behind it; the device-local mode has no email
+    var forgot = $('gForgot');
+    if (forgot && remote) {
+      forgot.hidden = false;
+      forgot.addEventListener('click', remoteForgot);
+    }
 
     var hint = $('gateModeHint');
     if (hint) {

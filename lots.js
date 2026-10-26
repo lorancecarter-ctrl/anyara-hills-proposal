@@ -70,6 +70,16 @@ window.Anyara = (function () {
     });
   }
 
+  /* Sends the reset email. redirectTo must also be listed under
+     Authentication → URL Configuration → Redirect URLs, or Supabase refuses it. */
+  function resetPassword(email) {
+    var sb = supabase();
+    if (!sb) return Promise.reject(new Error('not-configured'));
+    return sb.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + location.pathname
+    });
+  }
+
   function updatePassword(password) {
     var sb = supabase();
     if (!sb) return Promise.reject(new Error('not-configured'));
@@ -124,6 +134,7 @@ window.Anyara = (function () {
     signIn: signIn,
     signOut: signOut,
     currentSession: currentSession,
+    resetPassword: resetPassword,
     updatePassword: updatePassword,
     myProfile: myProfile,
     loadLots: loadLots,
