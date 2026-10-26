@@ -228,6 +228,7 @@
   /* ================= UI ================= */
 
   var pendingEmail = null;
+  var recoveryMode = false;   // set when arriving from a password-reset link
 
   function showError(id, message) {
     var el = $(id);
@@ -423,6 +424,7 @@
       });
     }).then(function () {
       btn.disabled = false;
+      recoveryMode = false;
       $('gNew').value = ''; $('gConfirm').value = '';
       enterApp(pendingEmail);
       if (window.AnyaraApp && window.AnyaraApp.onSignedIn) {
@@ -461,7 +463,51 @@
     }
 
     if (remote) {
+      var sb = window.Anyara.supabase();
+
+      /* A password-reset link lands here as #access_token=...&type=recovery.
+         supabase-js consumes the hash and signs the user in, which would drop
+         them straight into the app with the password they have forgotten still
+         set. Catch it and make them choose a new one. */
+      var hash = String(location.hash || '');
+      var recovering = hash.indexOf('type=recovery') !== -1;
+
+      var startRecovery = function (session) {
+        recoveryMode = true;
+        pendingEmail = (session && session.user && session.user.email) || pendingEmail;
+        $('gNew').value = '';
+        $('gConfirm').value = '';
+        showError('gChangeErr', '');
+        $('gChangeLede').textContent = 'Choose a new password for your account.';
+        showPane('change');
+        // don't leave the token sitting in the address bar
+        if (history.replaceState) {
+          history.replaceState(null, '', location.pathname + location.search);
+        }
+      };
+
+      sb.auth.onAuthStateChange(function (event, session) {
+        if (event === 'PASSWORD_RECOVERY') startRecovery(session);
+      });
+
+      if (recovering) {
+        // the hash is still being exchanged for a session; wait for it rather
+        // than racing the normal restore below
+        showPane('change');
+        $('gChangeLede').textContent = 'Checking your reset link…';
+        recoveryMode = true;
+        sb.auth.getSession().then(function (r) {
+          startRecovery(r && r.data && r.data.session);
+        }).catch(function () {
+          recoveryMode = false;
+          showError('gErr', 'That reset link is no longer valid. Ask your admin to send a new one.');
+          showPane('signin');
+        });
+        return;
+      }
+
       window.Anyara.currentSession().then(function (s) {
+        if (recoveryMode) return;            // a recovery took over mid-flight
         if (!s) { showPane('signin'); return; }
         return afterRemoteAuth();
       }).catch(function () { showPane('signin'); });
