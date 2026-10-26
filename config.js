@@ -14,5 +14,22 @@
  */
 window.ANYARA_CONFIG = {
   SUPABASE_URL: 'https://onnzgykuumuvfsnestrc.supabase.co',
-  SUPABASE_ANON_KEY: 'sb_publishable_rMcFcYdulYse22lyLxHzIQ_k_t4Pe2l'
+  SUPABASE_ANON_KEY: 'sb_publishable_rMcFcYdulYse22lyLxHzIQ_k_t4Pe2l',
+
+  /* How a forgotten password gets dealt with.
+   *
+   *   'admin' — the sales manager resets it in the Supabase dashboard. No email
+   *             is sent, so nothing to configure. Right for a small team who
+   *             work in the same gallery.
+   *
+   *   'email' — the app emails a reset link. Needs custom SMTP in Supabase
+   *             (the built-in sender allows only a couple of messages an hour)
+   *             and the Site URL set under Authentication → URL Configuration.
+   *
+   * Switching is this one word; the app handles the rest.
+   */
+  PASSWORD_RESET_MODE: 'admin',
+
+  /* Shown to an advisor who is locked out. Put whoever actually does resets. */
+  SUPPORT_CONTACT: 'your sales manager'
 };

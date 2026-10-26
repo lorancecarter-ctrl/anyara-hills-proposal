@@ -17,6 +17,44 @@ Done:
 - Function hardening — `search_path` pinned, and the helper functions no longer exposed over REST
   to anonymous callers.
 
+### Managing advisor accounts (no email required)
+
+`config.js` is set to `PASSWORD_RESET_MODE: 'admin'` — no email is sent anywhere, so there is no
+SMTP to configure and nothing to go wrong. The sales manager is the reset mechanism.
+
+**Add an advisor**
+
+1. Authentication → Users → **Add user**
+2. Email + a starter password you choose. Leave *Auto Confirm User* on.
+3. Hand them the starter password. At first sign-in the app forces them to pick their own.
+
+**Reset a forgotten password**
+
+1. Authentication → Users → the **…** menu → **Reset password** → type a new one
+2. Then re-prompt them to choose their own:
+
+```sql
+update public.profiles set must_change_password = true
+where email = 'them@khkland.com';
+```
+
+**Remove someone**
+
+Authentication → Users → **…** → Delete user. Their profile goes with them and they lose access on
+every iPad at once. There is nothing to collect back from the device.
+
+**Check who has access**
+
+```sql
+select email, role, must_change_password, created_at
+from public.profiles order by role, email;
+```
+
+**Switching to email resets later.** Set `PASSWORD_RESET_MODE: 'email'` in `config.js`, configure
+custom SMTP in Supabase (the built-in sender allows only a couple of messages an hour and cannot be
+raised without SMTP), and set the Site URL under Authentication → URL Configuration. Bump `CACHE` in
+`sw.js` so the iPads pick up the change.
+
 ### Remaining, and only you can do these
 
 **1. Create your admin account.** Dashboard → Authentication → Users → **Add user**, with your email

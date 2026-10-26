@@ -441,6 +441,17 @@
     showError('gErr', '');
     $('gNote').hidden = true;
 
+    var cfg = window.ANYARA_CONFIG || {};
+    // Admin-managed mode: no email is configured, so sending one would just
+    // disappear. Say who to ask instead.
+    if (cfg.PASSWORD_RESET_MODE !== 'email') {
+      $('gNote').textContent = 'Passwords are reset by ' + (cfg.SUPPORT_CONTACT || 'your sales manager')
+        + '. Ask them to set you a new one — it takes a minute, and you will be asked to choose '
+        + 'your own as soon as you sign in.';
+      $('gNote').hidden = false;
+      return;
+    }
+
     if (!looksLikeEmail(email)) {
       showError('gErr', 'Type your email address above first, then tap this again.');
       $('gEmail').focus();
@@ -499,6 +510,8 @@
     // only meaningful with a server behind it; the device-local mode has no email
     var forgot = $('gForgot');
     if (forgot && remote) {
+      var mode = (window.ANYARA_CONFIG || {}).PASSWORD_RESET_MODE;
+      forgot.textContent = mode === 'email' ? 'Forgot your password?' : 'Forgotten your password?';
       forgot.hidden = false;
       forgot.addEventListener('click', remoteForgot);
     }
