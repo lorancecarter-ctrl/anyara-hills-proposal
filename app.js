@@ -580,11 +580,28 @@
     go('cover');
     loadLots();
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js').catch(function () { /* offline unavailable */ });
-      });
-    }
+    registerServiceWorker();
+  }
+
+  /* The shell is served cache-first, so without this a new build sits in the
+     cache unused until someone clears website data — the page would load new
+     HTML against old JS. Reload once when a new worker takes over. */
+  function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+
+    var reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (reloading) return;      // guard against a reload loop
+      reloading = true;
+      location.reload();
+    });
+
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').then(function (reg) {
+        reg.update();                                  // check on every launch
+        setInterval(function () { reg.update(); }, 60 * 60 * 1000);
+      }).catch(function () { /* offline unavailable; the app still runs */ });
+    });
   }
 
   if (document.readyState === 'loading') {
