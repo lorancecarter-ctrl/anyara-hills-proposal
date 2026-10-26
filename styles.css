@@ -554,6 +554,8 @@ p{margin:0 0 14px;line-height:1.66}
 }
 .doc-foot strong{color:var(--green);font-size:12px;letter-spacing:.06em}
 .doc-dev{display:inline-block;margin-top:6px;font-style:italic}
+#pAdvisorName,#pAdvisorPhone{display:block}
+#pAdvisorName{color:var(--green);font-weight:500}
 
 /* ---------- session sheet ---------- */
 .sheet-scrim{position:fixed;inset:0;background:rgba(12,35,22,.42);z-index:40;backdrop-filter:blur(2px)}
@@ -671,6 +673,20 @@ body.is-locked{overflow:hidden}
 .sheet-account-k{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
 .sheet-account-v{font-size:14.5px;color:var(--green);word-break:break-all}
 #btnSignOut{margin-top:6px;color:var(--green)}
+.sheet-phone{width:100%;margin-top:16px;margin-bottom:0}
+
+/* nearby amenities with drive times */
+.near{list-style:none;margin:0;padding:0}
+.near li{
+  display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  font-size:13.5px;line-height:1.5;color:#4c524b;
+  padding:5px 0;border-bottom:1px solid var(--line-soft);
+}
+.near li:last-child{border-bottom:0}
+.near em{
+  font-style:normal;white-space:nowrap;
+  font-size:12.5px;color:var(--clay);font-variant-numeric:tabular-nums;
+}
 
 /* ---------- responsive ---------- */
 @media (max-width:1080px){

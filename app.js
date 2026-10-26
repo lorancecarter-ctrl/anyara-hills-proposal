@@ -315,9 +315,14 @@
       var el = $(pair[0]);
       if (!el) return;
       el.addEventListener('input', function () {
-        state[pair[1]] = el.value;
+        // store the bare number; the separators are display only
+        state[pair[1]] = isGrouped(el) ? el.value.replace(/[^0-9.\-]/g, '') : el.value;
         onChange();
       });
+      if (isGrouped(el)) {
+        el.addEventListener('blur', function () { el.value = groupDigits(state[pair[1]]); });
+        el.addEventListener('focus', function () { el.value = state[pair[1]] || ''; });
+      }
     });
 
     $('btnAddPriv').addEventListener('click', function () {
@@ -339,10 +344,28 @@
     });
   }
 
+  /* The money and area fields are text, not number, so they can carry thousand
+     separators — a number input refuses to display them. Keep state numeric and
+     only ever format what is shown. */
+  function groupDigits(v) {
+    if (v === '' || v === null || v === undefined) return '';
+    var n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
+    if (!isFinite(n)) return '';
+    var parts = String(n).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
+
+  function isGrouped(el) { return el && el.classList.contains('js-num'); }
+
   function syncFormFromState() {
     FIELDS.forEach(function (pair) {
       var el = $(pair[0]);
-      if (el && el.value !== String(state[pair[1]])) el.value = state[pair[1]];
+      if (!el) return;
+      var want = isGrouped(el) ? groupDigits(state[pair[1]]) : String(state[pair[1]]);
+      // don't reformat under the cursor while they are mid-edit
+      if (document.activeElement === el) return;
+      if (el.value !== want) el.value = want;
     });
   }
 
@@ -541,9 +564,39 @@
     window.Anyara.loadLots().then(renderLotPicker);
   }
 
+  /* The signed-in advisor's own number, printed on their proposals in place of
+     the gallery line. Blank falls back to the gallery number. */
+  var GALLERY_PHONE = '+6019 660 6511';
+  var advisor = { name: '', phone: '' };
+
+  function applyAdvisorContact() {
+    var name = $('pAdvisorName');
+    var phone = $('pAdvisorPhone');
+    if (!name || !phone) return;
+    name.textContent = advisor.name || '';
+    name.hidden = !advisor.name;
+    phone.textContent = advisor.phone || GALLERY_PHONE;
+  }
+
+  function setupAdvisor(profile) {
+    if (!profile) return;
+    advisor.phone = profile.phone || '';
+    advisor.name = profile.full_name || '';
+    var wrap = $('sPhoneWrap'), note = $('sPhoneNote'), input = $('sPhone');
+    if (wrap && input) {
+      wrap.hidden = false;
+      if (note) note.hidden = false;
+      input.value = advisor.phone;
+    }
+    applyAdvisorContact();
+  }
+
   /* Called by auth.js once a Supabase sign-in completes. */
   window.AnyaraApp = {
-    onSignedIn: function () { loadLots(); }
+    onSignedIn: function (profile) {
+      setupAdvisor(profile);
+      loadLots();
+    }
   };
 
   /* ================= boot ================= */
@@ -567,6 +620,23 @@
       state.notes = $('visitNotes').value;
       save();
     });
+
+    var phoneEl = $('sPhone');
+    if (phoneEl) {
+      var phoneTimer = null;
+      phoneEl.addEventListener('input', function () {
+        advisor.phone = phoneEl.value.trim();
+        applyAdvisorContact();
+        if (current === 'proposal') renderProposal();
+        clearTimeout(phoneTimer);
+        phoneTimer = setTimeout(function () {
+          if (window.Anyara && window.Anyara.configured()) {
+            window.Anyara.saveMyPhone(advisor.phone).catch(function () { /* offline; retries next edit */ });
+          }
+        }, 700);
+      });
+    }
+    applyAdvisorContact();
 
     $('faqSearch').addEventListener('input', function () { buildFaq($('faqSearch').value); });
     $('btnPrint').addEventListener('click', function () { window.print(); });

@@ -80,6 +80,19 @@ window.Anyara = (function () {
     });
   }
 
+  /* An advisor may edit their own profile row; profiles_update_self pins `role`
+     so this cannot be used to self-promote. */
+  function saveMyPhone(phone) {
+    var sb = supabase();
+    if (!sb) return Promise.reject(new Error('not-configured'));
+    return sb.auth.getUser().then(function (u) {
+      if (!u.data.user) throw new Error('not signed in');
+      return sb.from('profiles')
+        .update({ phone: phone || null })
+        .eq('id', u.data.user.id);
+    });
+  }
+
   function updatePassword(password) {
     var sb = supabase();
     if (!sb) return Promise.reject(new Error('not-configured'));
@@ -92,7 +105,7 @@ window.Anyara = (function () {
     return sb.auth.getUser().then(function (u) {
       var user = u && u.data && u.data.user;
       if (!user) return null;
-      return sb.from('profiles').select('id,email,full_name,role').eq('id', user.id).single()
+      return sb.from('profiles').select('id,email,full_name,role,phone,must_change_password').eq('id', user.id).single()
         .then(function (r) { return r.data || { id: user.id, email: user.email, role: 'advisor' }; })
         .catch(function () { return { id: user.id, email: user.email, role: 'advisor' }; });
     });
@@ -135,6 +148,7 @@ window.Anyara = (function () {
     signOut: signOut,
     currentSession: currentSession,
     resetPassword: resetPassword,
+    saveMyPhone: saveMyPhone,
     updatePassword: updatePassword,
     myProfile: myProfile,
     loadLots: loadLots,

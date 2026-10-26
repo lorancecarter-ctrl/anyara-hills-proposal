@@ -99,14 +99,14 @@ const FAQ = [
   { cat: 'Location', q: 'Who is constructing the New Bypass road?',
     a: 'It has been approved by the authorities and construction will be undertaken by our Group.' },
   { cat: 'Location', q: 'When is the bypass road estimated for completion?',
-    a: 'Estimated by end of 2027.' },
+    a: 'Estimated by end of 2028.' },
 
   { cat: 'Masterplan', q: 'What is the land tenure and type?',
     a: 'Freehold, agricultural land, individual title.' },
   { cat: 'Masterplan', q: 'What is the total land size?',
     a: '584 acres.' },
   { cat: 'Masterplan', q: 'How many lots are there?',
-    a: '428 lots in total. Phase 1 comprises 238 lots.' },
+    a: '428 lots in total — 224 lots across Phases 1 and 2, 104 lots in Phase 3, and 100 lots in Phase 4.' },
   { cat: 'Masterplan', q: 'What is the restriction on the land title?',
     a: 'Under the National Land Code, an agricultural title allows owners to build up to 20% of the land footprint — 43,560 sf × 20% = 8,712 sf.' },
   { cat: 'Masterplan', q: 'What infrastructure is provided?',
@@ -128,11 +128,11 @@ const FAQ = [
     a: 'Approximately RM 0.046 psf, calculated on lot size, plus operator charges of approximately RM 500 per month for The Anyara Lifestyle Hub. Both are payable monthly by the purchaser to the Developer.' },
 
   { cat: 'Lifestyle Hub', q: 'What is The Anyara Lifestyle Hub?',
-    a: 'A 10-acre commercial lifestyle hub offering a restaurant and café, residents’ lounge, events hall, natural hot spring spa, gym, pool and children’s playground.' },
-  { cat: 'Lifestyle Hub', q: 'Is the Hub open to the public?',
-    a: 'The restaurant, wellness centre and event hall are open to the public. The residents’ lounge is exclusive to residents.' },
+    a: 'A 10-acre commercial lifestyle hub offering a restaurant and café, residents’ lounge, events hall, natural hot spring spa, gym, pool, children’s playground, tennis court and pickleball court.' },
+  { cat: 'Lifestyle Hub', q: 'Who can use the Hub?',
+    a: 'The restaurant, wellness centre and event hall are open to owners’ guests. The residents’ lounge is exclusive to residents.' },
   { cat: 'Lifestyle Hub', q: 'Which facilities are exclusive to owners?',
-    a: 'Exclusive: residents’ lounge, meeting room, games room, reading room. Non-exclusive: swimming pool, kids’ pool, gym, children’s playground.' },
+    a: 'Exclusive: residents’ lounge, meeting room, games room, reading room. Shared with owners’ guests: swimming pool, kids’ pool, gym, children’s playground, tennis court, pickleball court.' },
   { cat: 'Lifestyle Hub', q: 'When will the Hub be completed?',
     a: 'Estimated by end of 2027.' },
 
@@ -141,8 +141,6 @@ const FAQ = [
 
   { cat: 'After sales', q: 'What after-sales services are provided?',
     a: 'The Developer can assist purchasers with the design, submission and construction of their dwelling; with the design, planting and maintenance of their farm or garden; and with housekeeping services (butler services as set out in the sales kit).' },
-  { cat: 'After sales', q: 'Are there charges if the Developer assists with design and construction?',
-    a: 'The Developer offers an Architect Subsidy Fee Programme of up to RM 40,000 where owners engage our panel architects.' },
 
   { cat: 'Ownership', q: 'What was the land previously used for?',
     a: 'Palm oil plantation.' },
@@ -163,7 +161,7 @@ const FAQ = [
 
 /* ---- Default privileges, from the Sales Package Proposal template ---- */
 const DEFAULT_PRIVILEGES = [
-  { name: 'Legal Fees Waiver',   detail: 'SPA legal fees fully borne by developer', value: 'Complimentary' },
-  { name: '10-Year Maintenance', detail: 'Maintenance fees waived for 10 years',    value: 'RM 30,000' },
-  { name: '6-Seater Buggy Car',  detail: 'One unit provided per lot',                value: 'Complimentary' }
+  { name: 'Legal Fees Waiver',   detail: 'SPA legal fees fully borne by developer',  value: 'Complimentary' },
+  { name: '10-Year Maintenance*', detail: 'Maintenance fees waived for 10 years',    value: 'RM 300,000' },
+  { name: '6-Seater Buggy Car*', detail: 'One unit provided per lot',                value: 'Complimentary' }
 ];
