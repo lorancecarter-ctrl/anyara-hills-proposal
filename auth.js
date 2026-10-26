@@ -455,8 +455,14 @@
       btn.disabled = false;
       btn.textContent = 'Forgot your password?';
       if (res && res.error) {
-        // rate limiting is the common one, and the message is worth showing as-is
-        showError('gErr', res.error.message);
+        var m = String(res.error.message || '');
+        // "email rate limit exceeded" means nothing to an advisor in a gallery
+        if (/rate limit/i.test(m)) {
+          showError('gErr', 'Too many reset emails have been sent recently. '
+            + 'Wait an hour and try again, or ask your sales manager to reset it for you.');
+        } else {
+          showError('gErr', m);
+        }
         return;
       }
       // deliberately the same message whether or not the address exists —
