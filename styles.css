@@ -754,29 +754,29 @@ body.is-locked{overflow:hidden}
      A client gets a single page, not four. Everything below is compression:
      tighter type, tighter rows, no decorative whitespace. Kept proportional
      so it still reads as the same document, only smaller. */
-  .doc-head{padding-bottom:12px;margin-bottom:16px}
-  .doc-logo{width:90px;margin-bottom:9px}
-  .doc-kicker{font-size:7pt;letter-spacing:.32em;margin-bottom:9px}
-  .doc-title{font-size:21pt;margin-bottom:5px}
-  .doc-sub{font-size:9pt}
+  .doc-head{padding-bottom:15px;margin-bottom:20px}
+  .doc-logo{width:110px;margin-bottom:11px}
+  .doc-kicker{font-size:8.5pt;letter-spacing:.34em;margin-bottom:13px}
+  .doc-title{font-size:26pt;margin-bottom:6px}
+  .doc-sub{font-size:11pt}
 
-  .doc-block{page-break-inside:avoid;margin-bottom:11px}
-  .doc-block h2{font-size:8pt;letter-spacing:.2em;margin-bottom:9px;padding-bottom:6px}
-  .doc-h3{font-size:13pt;margin:16px 0 7px}
-  .doc-lead{font-size:9.5pt;margin-bottom:9px}
+  .doc-block{page-break-inside:avoid;margin-bottom:14px}
+  .doc-block h2{font-size:9.5pt;letter-spacing:.2em;margin-bottom:12px;padding-bottom:8px}
+  .doc-h3{font-size:16pt;margin:20px 0 9px}
+  .doc-lead{font-size:11.5pt;margin-bottom:12px}
 
-  .doc-table{font-size:9pt}
-  .doc-table th,.doc-table td{padding:4px 10px;line-height:1.38}
-  .doc-table thead th{font-size:7pt;letter-spacing:.14em}
-  .doc-table tr.is-total td{font-size:13pt}
-  .doc-fine{font-size:7.5pt;line-height:1.5;margin-top:9px}
-  .doc-validity p{font-size:9.5pt}
+  .doc-table{font-size:11pt}
+  .doc-table th,.doc-table td{padding:6px 12px;line-height:1.42}
+  .doc-table thead th{font-size:8.5pt;letter-spacing:.14em}
+  .doc-table tr.is-total td{font-size:16pt}
+  .doc-fine{font-size:9pt;line-height:1.5;margin-top:12px}
+  .doc-validity p{font-size:11.5pt}
 
   .doc-foot{
     page-break-inside:avoid;
-    margin-top:20px;padding-top:12px;
-    font-size:7.5pt;line-height:1.55;
+    margin-top:24px;padding-top:14px;
+    font-size:9pt;line-height:1.6;
   }
-  .doc-foot strong{font-size:9pt}
+  .doc-foot strong{font-size:10.5pt}
   .doc-dev{margin-top:5px}
 }
