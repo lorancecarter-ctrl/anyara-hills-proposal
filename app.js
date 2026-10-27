@@ -433,6 +433,7 @@
   function renderProposal() {
     var d = derive();
     var dash = '—';
+    applyAdvisorContact();   // keep the footer in step with the Advisor field
 
     $('pGuest').textContent   = state.guest || dash;
     $('pAdvisor').textContent = state.advisor || dash;
@@ -617,8 +618,12 @@
     var name = $('pAdvisorName');
     var phone = $('pAdvisorPhone');
     if (!name || !phone) return;
-    name.textContent = advisor.name || '';
-    name.hidden = !advisor.name;
+    // The Advisor field on this visit is the name the client should see.
+    // profiles.full_name is only a fallback — the signup trigger derives it
+    // from the email address, so it reads like "lorenztong".
+    var shown = (state.advisor || '').trim() || advisor.name || '';
+    name.textContent = shown;
+    name.hidden = !shown;
     phone.textContent = advisor.phone || GALLERY_PHONE;
   }
 
