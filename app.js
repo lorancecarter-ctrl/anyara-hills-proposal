@@ -14,9 +14,35 @@
       lot: '', sf: '', list: '', privilege: '',
       mof: 60, rate: 3.5, tenure: 30, validWeeks: 2,
       privileges: DEFAULT_PRIVILEGES.map(function (p) { return Object.assign({}, p); }),
+      privilegesVersion: PRIVILEGES_VERSION,
       notes: '', used: {}
     };
   };
+
+  function samePrivileges(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    return a.every(function (p, i) {
+      return (p.name || '') === b[i].name
+        && (p.detail || '') === b[i].detail
+        && (p.value || '') === b[i].value;
+    });
+  }
+
+  /* A saved visit carries its own copy of the privileges, so a corrected
+     default would otherwise never reach an iPad with a visit already open —
+     which is how RM30,000 survived the fix. Upgrade an untouched set; leave
+     anything the advisor has edited exactly as they left it. */
+  function migratePrivileges(s) {
+    if (s.privilegesVersion === PRIVILEGES_VERSION) return s;
+    var untouched = LEGACY_PRIVILEGE_SETS.some(function (set) {
+      return samePrivileges(s.privileges, set);
+    });
+    if (untouched) {
+      s.privileges = DEFAULT_PRIVILEGES.map(function (p) { return Object.assign({}, p); });
+    }
+    s.privilegesVersion = PRIVILEGES_VERSION;
+    return s;
+  }
 
   var state = load();
 
@@ -34,7 +60,12 @@
       var s = Object.assign(blank(), saved);
       if (!Array.isArray(s.privileges) || !s.privileges.length) s.privileges = blank().privileges;
       if (!s.used || typeof s.used !== 'object') s.used = {};
-      return s;
+      // Take the version from the saved data, not from blank(): Object.assign
+      // only overwrites keys the save actually has, so a visit written before
+      // versioning existed would otherwise inherit the current version and be
+      // mistaken for already-migrated.
+      s.privilegesVersion = saved.privilegesVersion || 1;
+      return migratePrivileges(s);
     } catch (e) { return blank(); }
   }
 

@@ -159,6 +159,19 @@ const FAQ = [
     a: 'Free SPA legal fees; 10-year free maintenance fee; and a complimentary 6-seater electric buggy. Early bird and psf-linked discounts have applied at various times. All figures are subject to the terms in force at the time of sale — always confirm current figures with your sales manager before quoting a client.' }
 ];
 
+/* Bump when DEFAULT_PRIVILEGES changes, so saved visits pick the change up. */
+const PRIVILEGES_VERSION = 2;
+
+/* Superseded default sets. A saved visit still carrying one of these verbatim
+   is upgraded silently on load; one the advisor has edited is left alone. */
+const LEGACY_PRIVILEGE_SETS = [
+  [
+    { name: 'Legal Fees Waiver',   detail: 'SPA legal fees fully borne by developer', value: 'Complimentary' },
+    { name: '10-Year Maintenance', detail: 'Maintenance fees waived for 10 years',    value: 'RM 30,000' },
+    { name: '6-Seater Buggy Car',  detail: 'One unit provided per lot',                value: 'Complimentary' }
+  ]
+];
+
 /* ---- Default privileges, from the Sales Package Proposal template ---- */
 const DEFAULT_PRIVILEGES = [
   { name: 'Legal Fees Waiver',   detail: 'SPA legal fees fully borne by developer',  value: 'Complimentary' },
