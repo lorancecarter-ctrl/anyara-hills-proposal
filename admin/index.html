@@ -132,6 +132,26 @@
       </div>
     </section>
 
+    <!-- ---------- conversation questions ---------- -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Conversation questions</h2>
+        <div class="card-head-actions">
+          <span class="save-state" id="talkState"></span>
+          <button class="btn btn-ghost btn-sm" id="btnTalkReload">Reload</button>
+        </div>
+      </div>
+      <p class="card-lede">What advisors see under <strong>Talk</strong> in the sales app. Edits save
+      as soon as you move off a field. Advisors pick these up the next time their iPad is online.</p>
+
+      <div id="talkMsg"></div>
+      <div id="talkStages"></div>
+
+      <div class="admin-actions">
+        <button class="btn btn-ghost btn-sm" id="btnAddStage">+ Add a stage</button>
+      </div>
+    </section>
+
     <!-- ---------- history ---------- -->
     <section class="card">
       <h2>Import history</h2>
@@ -156,5 +176,6 @@
 <script src="../config.js"></script>
 <script src="../lots.js"></script>
 <script src="admin.js"></script>
+<script src="talk.js"></script>
 </body>
 </html>

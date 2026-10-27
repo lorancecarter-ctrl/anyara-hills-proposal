@@ -8,6 +8,7 @@ window.Anyara = (function () {
   'use strict';
 
   var LOTS_CACHE_KEY = 'anyara.lots.v1';
+  var TALK_CACHE_KEY = 'anyara.talk.v1';
   var cfg = window.ANYARA_CONFIG || {};
   var client = null;
 
@@ -141,8 +142,55 @@ window.Anyara = (function () {
       });
   }
 
+  /* ---------------- conversation questions ---------------- */
+
+  /* Shaped to match the bundled DISCOVERY constant, so the app renders either
+     source identically. Never rejects: an offline iPad falls back to its cache,
+     and the caller falls back to the bundled set when there is nothing at all. */
+  function loadTalk() {
+    var sb = supabase();
+
+    var cached = (function () {
+      try {
+        var raw = localStorage.getItem(TALK_CACHE_KEY);
+        var p = raw ? JSON.parse(raw) : null;
+        return (p && Array.isArray(p.stages) && p.stages.length) ? p : null;
+      } catch (e) { return null; }
+    })();
+
+    var fromCache = function () {
+      return cached ? { stages: cached.stages, source: 'cache' } : { stages: [], source: 'none' };
+    };
+
+    if (!sb) return Promise.resolve(fromCache());
+
+    return sb.from('talk_stages')
+      .select('id,name,hint,sort_order,talk_questions(id,text,sort_order,active)')
+      .order('sort_order', { ascending: true })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        var stages = (res.data || []).map(function (s) {
+          var qs = (s.talk_questions || [])
+            .filter(function (q) { return q.active; })
+            .sort(function (a, b) { return a.sort_order - b.sort_order; })
+            .map(function (q) { return { id: q.id, text: q.text }; });
+          return { id: s.id, stage: s.name, hint: s.hint || '', qs: qs };
+        }).filter(function (s) { return s.qs.length; });
+
+        if (!stages.length) return fromCache();
+        try {
+          localStorage.setItem(TALK_CACHE_KEY, JSON.stringify({
+            stages: stages, fetchedAt: new Date().toISOString()
+          }));
+        } catch (e) { /* quota */ }
+        return { stages: stages, source: 'network' };
+      })
+      .catch(fromCache);
+  }
+
   return {
     configured: configured,
+    loadTalk: loadTalk,
     supabase: supabase,
     signIn: signIn,
     signOut: signOut,

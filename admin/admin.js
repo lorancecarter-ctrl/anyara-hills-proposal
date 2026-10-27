@@ -702,6 +702,7 @@
         + 'Promote it with the SQL at the bottom of supabase/schema.sql.', 'error');
     }
     refresh();
+    if (window.AnyaraTalkAdmin) window.AnyaraTalkAdmin.load();
   }
 
   function handleSignIn(e) {

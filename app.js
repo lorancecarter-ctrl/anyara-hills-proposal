@@ -188,9 +188,14 @@
 
   /* ================= discovery ================= */
 
-  function buildDiscovery() {
+  /* Questions come from Supabase so an admin can edit them; the bundled
+     DISCOVERY set is the fallback for an iPad that has never been online.
+     Tick keys use the question id where there is one, so renaming or
+     reordering a question does not silently move someone's ticks. */
+  function buildDiscovery(stages) {
     var wrap = $('discoveryStages');
-    DISCOVERY.forEach(function (st, si) {
+    wrap.textContent = '';
+    (stages || DISCOVERY).forEach(function (st, si) {
       var sec = document.createElement('div');
       sec.className = 'disc-stage';
 
@@ -207,14 +212,15 @@
       sec.appendChild(h);
 
       st.qs.forEach(function (q, qi) {
-        var key = si + '.' + qi;
+        var text = (q && typeof q === 'object') ? q.text : q;
+        var key = (q && q.id) ? q.id : (si + '.' + qi);
         var row = document.createElement('div');
         row.className = 'disc-q' + (state.used[key] ? ' is-used' : '');
         row.setAttribute('role', 'button');
         row.setAttribute('tabindex', '0');
         row.dataset.key = key;
         row.innerHTML = '<span class="dq-box">✓</span><p></p>';
-        row.querySelector('p').textContent = q;
+        row.querySelector('p').textContent = text;
 
         var toggle = function () {
           if (state.used[key]) delete state.used[key];
@@ -595,6 +601,13 @@
     window.Anyara.loadLots().then(renderLotPicker);
   }
 
+  function loadTalk() {
+    if (!window.Anyara || !window.Anyara.configured()) return;
+    window.Anyara.loadTalk().then(function (res) {
+      if (res.stages && res.stages.length) buildDiscovery(res.stages);
+    });
+  }
+
   /* The signed-in advisor's own number, printed on their proposals in place of
      the gallery line. Blank falls back to the gallery number. */
   var GALLERY_PHONE = '+6019 660 6511';
@@ -627,6 +640,7 @@
     onSignedIn: function (profile) {
       setupAdvisor(profile);
       loadLots();
+      loadTalk();
     }
   };
 
@@ -680,6 +694,7 @@
     onChange();
     go('cover');
     loadLots();
+    loadTalk();
 
     registerServiceWorker();
   }

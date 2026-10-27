@@ -206,3 +206,64 @@ grant  execute on function public.is_admin() to authenticated;
 --
 -- To revoke someone, delete them under Authentication → Users. Their profile
 -- row goes with them, and they can no longer read pricing on any device.
+
+-- ---------------------------------------------------- conversation ("Talk") --
+--
+-- Question content the admin console edits, so wording can change without a
+-- developer. Same access shape as lots: any signed-in user reads, admins write.
+-- The app falls back to its bundled question set when these tables are empty or
+-- the iPad has never been online.
+
+create table if not exists public.talk_stages (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  hint       text,
+  sort_order integer not null default 100,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.talk_questions (
+  id         uuid primary key default gen_random_uuid(),
+  stage_id   uuid not null references public.talk_stages (id) on delete cascade,
+  text       text not null check (length(btrim(text)) > 0),
+  sort_order integer not null default 100,
+  active     boolean not null default true,   -- retire a question without losing it
+  updated_at timestamptz not null default now(),
+  updated_by uuid references auth.users (id) on delete set null
+);
+
+create index if not exists talk_questions_stage_idx on public.talk_questions (stage_id, sort_order);
+
+create or replace function public.touch_talk_question()
+returns trigger language plpgsql security invoker set search_path = public
+as $$
+begin
+  new.updated_at := now();
+  new.updated_by := auth.uid();
+  return new;
+end;
+$$;
+
+drop trigger if exists talk_questions_touch on public.talk_questions;
+create trigger talk_questions_touch
+  before insert or update on public.talk_questions
+  for each row execute function public.touch_talk_question();
+
+alter table public.talk_stages    enable row level security;
+alter table public.talk_questions enable row level security;
+
+drop policy if exists talk_stages_select on public.talk_stages;
+create policy talk_stages_select on public.talk_stages
+  for select to authenticated using (true);
+
+drop policy if exists talk_stages_admin on public.talk_stages;
+create policy talk_stages_admin on public.talk_stages
+  for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists talk_questions_select on public.talk_questions;
+create policy talk_questions_select on public.talk_questions
+  for select to authenticated using (true);
+
+drop policy if exists talk_questions_admin on public.talk_questions;
+create policy talk_questions_admin on public.talk_questions
+  for all to authenticated using (public.is_admin()) with check (public.is_admin());
