@@ -798,8 +798,11 @@ body.is-locked{overflow:hidden}
 
 /* ---------- print: the proposal only ---------- */
 @media print{
-  @page{size:A4;margin:14mm}
+  @page{size:A4;margin:12mm}
   html,body{height:auto;background:#fff}
+  /* iOS inflates text when it thinks a column is narrow; that silently made
+     the proposal taller on iPad than on a desktop browser. */
+  html{-webkit-text-size-adjust:none;text-size-adjust:none}
   #app{display:block;height:auto;overflow:visible}
   #rail,.no-print,.sheet,.sheet-scrim{display:none!important}
   #stage{overflow:visible;position:static}
@@ -808,8 +811,13 @@ body.is-locked{overflow:hidden}
     display:block!important;position:static;opacity:1;visibility:visible;
     transform:none;overflow:visible;background:#fff;padding:0;
   }
+  /* Fixed width, not 100%. The printable width differs between engines — iPad
+     Safari lays out narrower than desktop Chrome — so a percentage width means
+     different line wrapping and therefore a different height on each device.
+     Pinning it makes the page identical everywhere; anything narrower than
+     this scales the whole sheet down rather than reflowing it. */
   .doc{
-    width:100%;max-width:none;margin:0;padding:0;
+    width:660px;max-width:none;margin:0 auto;padding:0;
     box-shadow:none;border-radius:0;
   }
   /* ---- fit the whole proposal on one A4 sheet ----
@@ -822,7 +830,11 @@ body.is-locked{overflow:hidden}
   .doc-title{font-size:19pt;margin-bottom:3px}
   .doc-sub{font-size:9pt}
 
-  .doc-block{page-break-inside:avoid;margin-bottom:8px}
+  /* flow, do not jump: a whole block moving to page two is what left
+     page one two-thirds empty */
+  .doc-block{margin-bottom:8px}
+  .doc-table tr{page-break-inside:avoid}
+  .doc-table thead{display:table-header-group}
   .doc-block h2{font-size:9pt;letter-spacing:.18em;margin-bottom:6px;padding-bottom:5px}
   .doc-h3{font-size:15pt;margin:16px 0 8px}
   .doc-lead{font-size:10pt;margin-bottom:7px}
