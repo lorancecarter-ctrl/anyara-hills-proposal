@@ -288,6 +288,9 @@ p{margin:0 0 14px;line-height:1.66}
 
 /* ---------- timeline ---------- */
 .timeline{display:flex;align-items:stretch;gap:0;margin-bottom:8px;flex-wrap:wrap}
+/* a lone card sits left at its natural width rather than stretching the row */
+.timeline-single{justify-content:flex-start}
+.timeline-single .tl-item{flex:0 1 auto;min-width:0;max-width:440px}
 .tl-item{
   flex:1;min-width:220px;
   border:1px solid var(--line);border-radius:4px;
