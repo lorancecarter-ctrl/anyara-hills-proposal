@@ -435,10 +435,6 @@
     var dash = '—';
     applyAdvisorContact();   // keep the footer in step with the Advisor field
 
-    $('pGuest').textContent   = state.guest || dash;
-    $('pAdvisor').textContent = state.advisor || dash;
-    $('pDate').textContent    = longDate(state.date);
-
     $('pLot').textContent  = state.lot ? ('Lot ' + state.lot) : dash;
     $('pSize').textContent = d.sf > 0
       ? (d.acres.toFixed(3) + ' acres  |  ' + sfFmt(d.sf))
@@ -459,10 +455,6 @@
         tr.appendChild(cell(p.value, 'ta-r'));
         body.appendChild(tr);
       });
-
-    var nettTxt = hasVal(state.list) ? rm(d.nett) : dash;
-    $('pOpt1').textContent = nettTxt;
-    $('pOpt2').textContent = nettTxt;
 
     $('pLoanLabel').textContent = 'Loan Quantum (' + trim(d.mof) + '% Margin of Finance)';
     $('pDownLabel').textContent = 'Down Payment (' + trim(100 - d.mof) + '%)';
