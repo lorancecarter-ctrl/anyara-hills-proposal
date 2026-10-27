@@ -390,8 +390,21 @@
           <fieldset class="fs">
             <legend>Pricing</legend>
             <label>List price (RM)<input type="text" id="fList" inputmode="decimal" class="js-num" placeholder="6,043,750"></label>
-            <label>Anyara Privilege Entitlement (RM)<input type="text" id="fPrivilege" inputmode="decimal" class="js-num" placeholder="1,808,750"></label>
+
+            <label class="tick">
+              <input type="checkbox" id="fPrivilegeOn" checked>
+              <span>Apply Anyara Privilege Entitlement</span>
+            </label>
+            <label class="indent">Anyara Privilege Entitlement (RM)<input type="text" id="fPrivilege" inputmode="decimal" class="js-num" placeholder="1,808,750"></label>
+
+            <label class="tick">
+              <input type="checkbox" id="fSpecialOn">
+              <span>Apply special discount</span>
+            </label>
+            <label class="indent">Special discount (RM)<input type="text" id="fSpecial" inputmode="decimal" class="js-num" placeholder="600,000"></label>
+
             <label class="ro">Nett SPA price<output id="oNett">—</output></label>
+            <p class="warn-inline" id="nettWarning" hidden></p>
             <label class="ro">Nett price psf<output id="oPsf">—</output></label>
           </fieldset>
 
@@ -449,7 +462,8 @@
               <tr><th>Lot No.</th><td id="pLot">—</td></tr>
               <tr><th>Land Size</th><td id="pSize">—</td></tr>
               <tr><th>List Price</th><td id="pList">—</td></tr>
-              <tr class="is-credit"><th>Anyara Privilege Entitlement</th><td id="pPriv">—</td></tr>
+              <tr class="is-credit" id="pPrivRow"><th>Anyara Privilege Entitlement</th><td id="pPriv">—</td></tr>
+              <tr class="is-credit" id="pSpecialRow"><th>Special Discount</th><td id="pSpecial">—</td></tr>
               <tr class="is-total"><th>Nett SPA Price</th><td id="pNett">—</td></tr>
               <tr><th>Nett Price (PSF)</th><td id="pPsf">—</td></tr>
             </tbody>

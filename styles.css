@@ -429,6 +429,27 @@ p{margin:0 0 14px;line-height:1.66}
   font-family:var(--serif);font-size:22px;padding-top:4px;
 }
 .fs label.ro.accent output{color:var(--clay);font-size:27px}
+/* discount toggles */
+.fs label.tick{
+  flex-direction:row;align-items:center;gap:10px;
+  margin-top:18px;margin-bottom:-4px;
+  text-transform:none;letter-spacing:normal;
+  font-size:14px;color:var(--green);cursor:pointer;
+}
+.fs label.tick input[type="checkbox"]{
+  /* .fs input sets appearance:none for the text fields, which also strips the
+     tick out of a checkbox — put the native control back. */
+  -webkit-appearance:checkbox;appearance:auto;
+  width:19px;height:19px;flex:0 0 19px;margin:0;padding:0;
+  border:0;border-bottom:0;background:none;border-radius:0;
+  accent-color:var(--green-3);cursor:pointer;
+}
+.fs label.indent{padding-left:29px}
+.warn-inline{
+  margin:8px 0 0;padding-left:2px;
+  font-size:12.5px;line-height:1.5;color:#8c3b2c;
+}
+
 .fs .inline-lab{
   flex-direction:row;align-items:baseline;gap:8px;
   text-transform:none;letter-spacing:normal;font-size:14.5px;color:#454b44;

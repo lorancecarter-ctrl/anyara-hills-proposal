@@ -12,6 +12,8 @@
     return {
       guest: '', advisor: '', date: todayISO(),
       lot: '', sf: '', list: '', privilege: '',
+      privilegeOn: true,          // comes from the price list, so on by default
+      special: '600000', specialOn: false,   // opted into per deal, not automatic
       mof: 60, rate: 3.5, tenure: 30, validWeeks: 2,
       privileges: DEFAULT_PRIVILEGES.map(function (p) { return Object.assign({}, p); }),
       privilegesVersion: PRIVILEGES_VERSION,
@@ -123,8 +125,11 @@
   function derive() {
     var sf = num(state.sf);
     var list = num(state.list);
-    var priv = num(state.privilege);
-    var nett = list - priv;
+    // A discount only counts when its box is ticked. Unticked is not just a
+    // display choice — it is excluded from the arithmetic entirely.
+    var priv = state.privilegeOn ? num(state.privilege) : 0;
+    var special = state.specialOn ? num(state.special) : 0;
+    var nett = list - priv - special;
     var mof = num(state.mof);
     var loan = nett * mof / 100;
 
@@ -133,6 +138,10 @@
       acres: sf > 0 ? sf / SQFT_PER_ACRE : 0,
       list: list,
       privilege: priv,
+      privilegeOn: !!state.privilegeOn,
+      special: special,
+      specialOn: !!state.specialOn,
+      discountTotal: priv + special,
       nett: nett,
       psf: sf > 0 ? nett / sf : 0,
       mof: mof,
@@ -344,6 +353,7 @@
   var FIELDS = [
     ['fGuest', 'guest'], ['fAdvisor', 'advisor'], ['fDate', 'date'],
     ['fLot', 'lot'], ['fSf', 'sf'], ['fList', 'list'], ['fPrivilege', 'privilege'],
+    ['fSpecial', 'special'],
     ['fMof', 'mof'], ['fRate', 'rate'], ['fTenure', 'tenure'], ['fValidWeeks', 'validWeeks']
   ];
 
@@ -379,6 +389,15 @@
     $('fLotPick').addEventListener('change', function () {
       if (this.value) applyLot(this.value);
     });
+
+    [['fPrivilegeOn', 'privilegeOn'], ['fSpecialOn', 'specialOn']].forEach(function (pair) {
+      var box = $(pair[0]);
+      if (!box) return;
+      box.addEventListener('change', function () {
+        state[pair[1]] = box.checked;
+        onChange();
+      });
+    });
   }
 
   /* The money and area fields are text, not number, so they can carry thousand
@@ -396,6 +415,10 @@
   function isGrouped(el) { return el && el.classList.contains('js-num'); }
 
   function syncFormFromState() {
+    [['fPrivilegeOn', 'privilegeOn'], ['fSpecialOn', 'specialOn']].forEach(function (pair) {
+      var box = $(pair[0]);
+      if (box) box.checked = !!state[pair[1]];
+    });
     FIELDS.forEach(function (pair) {
       var el = $(pair[0]);
       if (!el) return;
@@ -411,6 +434,18 @@
     $('oAcres').textContent   = d.sf > 0 ? d.acres.toFixed(3) + ' acres' : '—';
     $('oNett').textContent    = hasVal(state.list) ? rm(d.nett) : '—';
     $('oPsf').textContent     = (d.sf > 0 && hasVal(state.list)) ? rm(d.psf) + ' psf' : '—';
+
+    // Two discounts can now be applied together, so guard the obvious error.
+    var warn = $('nettWarning');
+    if (warn) {
+      if (hasVal(state.list) && d.nett < 0) {
+        warn.textContent = 'The discounts applied come to ' + rm(d.discountTotal)
+          + ', which is more than the list price. Check the entitlement and the special discount.';
+        warn.hidden = false;
+      } else {
+        warn.hidden = true;
+      }
+    }
     $('oLoan').textContent    = d.loan > 0 ? rm(d.loan) : '—';
     $('oDown').textContent    = d.loan > 0 ? rm(d.down) : '—';
     $('oMonthly').textContent = d.monthly > 0 ? rm(d.monthly) : '—';
@@ -440,7 +475,19 @@
       ? (d.acres.toFixed(3) + ' acres  |  ' + sfFmt(d.sf))
       : dash;
     $('pList').textContent = hasVal(state.list) ? rm(d.list) : dash;
-    $('pPriv').textContent = hasVal(state.privilege) && d.privilege > 0 ? '– ' + rm(d.privilege) : dash;
+
+    /* An unticked discount is left off the client's copy entirely, rather than
+       shown as nil — the proposal should not advertise something not given. */
+    var privRow = $('pPrivRow');
+    var showPriv = d.privilegeOn && d.privilege > 0;
+    privRow.hidden = !showPriv;
+    $('pPriv').textContent = showPriv ? '– ' + rm(d.privilege) : dash;
+
+    var specialRow = $('pSpecialRow');
+    var showSpecial = d.specialOn && d.special > 0;
+    specialRow.hidden = !showSpecial;
+    $('pSpecial').textContent = showSpecial ? '– ' + rm(d.special) : dash;
+
     $('pNett').textContent = hasVal(state.list) ? rm(d.nett) : dash;
     $('pPsf').textContent  = (d.sf > 0 && hasVal(state.list)) ? rm(d.psf) + ' psf' : dash;
 
