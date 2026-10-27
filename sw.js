@@ -1,7 +1,7 @@
 /* Anyara Hills — offline cache.
    Bump CACHE when you change any app file, so iPads pick the new version up. */
 
-const CACHE = 'anyara-v20';
+const CACHE = 'anyara-v21';
 
 const SHELL = [
   './',
@@ -28,6 +28,14 @@ self.addEventListener('install', event => {
       .then(cache => Promise.all(SHELL.map(url => cache.add(url).catch(() => {}))))
       .then(() => self.skipWaiting())
   );
+});
+
+// Lets the page ask which build it is actually running, so a stale cache can
+// be identified instead of guessed at.
+self.addEventListener('message', event => {
+  if (event.data === 'version' && event.ports && event.ports[0]) {
+    event.ports[0].postMessage(CACHE);
+  }
 });
 
 self.addEventListener('activate', event => {

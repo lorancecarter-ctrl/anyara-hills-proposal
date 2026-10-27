@@ -707,6 +707,25 @@
   /* The shell is served cache-first, so without this a new build sits in the
      cache unused until someone clears website data — the page would load new
      HTML against old JS. Reload once when a new worker takes over. */
+  /* Ask the active worker which build it is serving. Guessing at stale caches
+     has cost more time on this project than any actual bug. */
+  function showVersion() {
+    var el = $('appVersion');
+    if (!el) return;
+    if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) {
+      el.textContent = 'live (no offline cache)';
+      return;
+    }
+    var ch = new MessageChannel();
+    var done = false;
+    ch.port1.onmessage = function (e) {
+      done = true;
+      el.textContent = e.data || 'unknown';
+    };
+    navigator.serviceWorker.controller.postMessage('version', [ch.port2]);
+    setTimeout(function () { if (!done) el.textContent = 'unknown'; }, 2000);
+  }
+
   function registerServiceWorker() {
     if (!('serviceWorker' in navigator)) return;
 
@@ -718,9 +737,13 @@
     });
 
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js').then(function (reg) {
+      // updateViaCache 'none': GitHub Pages serves sw.js with max-age=600, and
+      // iOS has been inconsistent about bypassing that when checking for a new
+      // worker. This makes the check always hit the network.
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(function (reg) {
         reg.update();                                  // check on every launch
         setInterval(function () { reg.update(); }, 60 * 60 * 1000);
+        setTimeout(showVersion, 400);
       }).catch(function () { /* offline unavailable; the app still runs */ });
     });
   }

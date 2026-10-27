@@ -677,6 +677,11 @@ body.is-locked{overflow:hidden}
 .sheet-account-v{font-size:14.5px;color:var(--green);word-break:break-all}
 #btnSignOut{margin-top:6px;color:var(--green)}
 .sheet-phone{width:100%;margin-top:16px;margin-bottom:0}
+.sheet-version{
+  font-size:11px;color:var(--stone);margin:14px 0 0;
+  letter-spacing:.04em;
+}
+.sheet-version span{font-variant-numeric:tabular-nums;color:var(--green)}
 
 /* nearby amenities with drive times */
 .near{list-style:none;margin:0;padding:0}
