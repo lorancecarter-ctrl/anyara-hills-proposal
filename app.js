@@ -250,12 +250,16 @@
 
   /* ================= FAQ ================= */
 
+  /* Served from Supabase so an admin can edit it; the bundled FAQ is the
+     fallback for an iPad that has never been online. */
+  var faqRows = FAQ;
+
   function buildFaq(filter) {
     var wrap = $('faqList');
     wrap.textContent = '';
     var f = (filter || '').trim().toLowerCase();
 
-    var rows = FAQ.filter(function (item) {
+    var rows = faqRows.filter(function (item) {
       if (!f) return true;
       return (item.q + ' ' + item.a + ' ' + item.cat).toLowerCase().indexOf(f) !== -1;
     });
@@ -729,6 +733,15 @@
     window.Anyara.loadGallery().then(renderGallery);
   }
 
+  function loadFaq() {
+    if (!window.Anyara || !window.Anyara.configured()) return;
+    window.Anyara.loadFaq().then(function (res) {
+      if (!res.rows || !res.rows.length) return;
+      faqRows = res.rows;
+      buildFaq($('faqSearch') ? $('faqSearch').value : '');
+    });
+  }
+
   function loadTalk() {
     if (!window.Anyara || !window.Anyara.configured()) return;
     window.Anyara.loadTalk().then(function (res) {
@@ -774,6 +787,7 @@
       loadLots();
       loadTalk();
       loadGallery();
+      loadFaq();
     }
   };
 
@@ -829,6 +843,7 @@
     loadLots();
     loadTalk();
     loadGallery();
+    loadFaq();
 
     $('lbClose').addEventListener('click', closeLightbox);
     $('lbPrev').addEventListener('click', function () { stepLightbox(-1); });

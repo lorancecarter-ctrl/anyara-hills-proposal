@@ -703,6 +703,7 @@
     }
     refresh();
     if (window.AnyaraTalkAdmin) window.AnyaraTalkAdmin.load();
+    if (window.AnyaraFaqAdmin) window.AnyaraFaqAdmin.load();
     if (window.AnyaraGalleryAdmin) window.AnyaraGalleryAdmin.load();
   }
 

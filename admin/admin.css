@@ -204,6 +204,29 @@
 .tq-btn-danger:hover{border-color:#8c3b2c;color:#8c3b2c}
 .tq-add{margin-top:12px}
 
+/* ---------- FAQ editor ---------- */
+.faq-row{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:9px 0;border-bottom:1px solid var(--line-soft);
+}
+.faq-row:last-child{border-bottom:0}
+.faq-row.is-off .faq-fields{opacity:.5}
+.faq-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.faq-q-input{
+  font-family:var(--sans);font-size:14.5px;font-weight:500;color:var(--green);
+  border:0;border-radius:3px;background:transparent;padding:6px 8px;width:100%;
+}
+.faq-a-input{
+  font-family:var(--sans);font-size:13.5px;line-height:1.55;color:#4c524b;
+  border:0;border-radius:3px;background:transparent;padding:6px 8px;width:100%;
+  resize:none;overflow:hidden;
+}
+.faq-q-input:hover,.faq-a-input:hover{background:#f0eee2}
+.faq-q-input:focus,.faq-a-input:focus{
+  outline:none;background:#fff;box-shadow:inset 0 0 0 1px var(--green-3);
+}
+.faq-row .tq-row-actions{padding-top:8px}
+
 /* ---------- gallery manager ---------- */
 .gal-upload{
   display:flex;align-items:center;gap:16px;flex-wrap:wrap;

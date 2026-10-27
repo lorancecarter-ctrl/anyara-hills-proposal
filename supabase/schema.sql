@@ -324,3 +324,49 @@ drop policy if exists gallery_objects_delete on storage.objects;
 create policy gallery_objects_delete on storage.objects
   for delete to authenticated
   using (bucket_id = 'gallery' and public.is_admin());
+
+-- ----------------------------------------------------------------- FAQ --
+--
+-- One table: category_order keeps the sections in a deliberate order
+-- (Location first, Payment last) rather than alphabetically, and sort_order
+-- orders the questions inside a section. A category exists only through its
+-- rows, so renaming or reordering one updates every row that carries it.
+
+create table if not exists public.faq_items (
+  id             uuid primary key default gen_random_uuid(),
+  category       text not null,
+  category_order integer not null default 100,
+  question       text not null check (length(btrim(question)) > 0),
+  answer         text not null check (length(btrim(answer)) > 0),
+  sort_order     integer not null default 100,
+  active         boolean not null default true,
+  updated_at     timestamptz not null default now(),
+  updated_by     uuid references auth.users (id) on delete set null
+);
+
+create index if not exists faq_order_idx on public.faq_items (category_order, sort_order);
+
+create or replace function public.touch_faq_item()
+returns trigger language plpgsql security invoker set search_path = public
+as $$
+begin
+  new.updated_at := now();
+  new.updated_by := auth.uid();
+  return new;
+end;
+$$;
+
+drop trigger if exists faq_items_touch on public.faq_items;
+create trigger faq_items_touch
+  before insert or update on public.faq_items
+  for each row execute function public.touch_faq_item();
+
+alter table public.faq_items enable row level security;
+
+drop policy if exists faq_select on public.faq_items;
+create policy faq_select on public.faq_items
+  for select to authenticated using (true);
+
+drop policy if exists faq_admin on public.faq_items;
+create policy faq_admin on public.faq_items
+  for all to authenticated using (public.is_admin()) with check (public.is_admin());

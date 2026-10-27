@@ -188,6 +188,49 @@ window.Anyara = (function () {
       .catch(fromCache);
   }
 
+  /* ---------------- faq ---------------- */
+
+  var FAQ_CACHE_KEY = 'anyara.faq.v1';
+
+  /* Returns rows shaped like the bundled FAQ constant ({cat, q, a}) so the app
+     renders either source identically. Never rejects. */
+  function loadFaq() {
+    var sb = supabase();
+
+    var cached = (function () {
+      try {
+        var raw = localStorage.getItem(FAQ_CACHE_KEY);
+        var p = raw ? JSON.parse(raw) : null;
+        return (p && Array.isArray(p.rows) && p.rows.length) ? p : null;
+      } catch (e) { return null; }
+    })();
+    var fromCache = function () {
+      return cached ? { rows: cached.rows, source: 'cache' } : { rows: [], source: 'none' };
+    };
+
+    if (!sb) return Promise.resolve(fromCache());
+
+    return sb.from('faq_items')
+      .select('id,category,category_order,question,answer,sort_order,active')
+      .eq('active', true)
+      .order('category_order', { ascending: true })
+      .order('sort_order', { ascending: true })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        var rows = (res.data || []).map(function (r) {
+          return { cat: r.category, q: r.question, a: r.answer };
+        });
+        if (!rows.length) return fromCache();
+        try {
+          localStorage.setItem(FAQ_CACHE_KEY, JSON.stringify({
+            rows: rows, fetchedAt: new Date().toISOString()
+          }));
+        } catch (e) { /* quota */ }
+        return { rows: rows, source: 'network' };
+      })
+      .catch(fromCache);
+  }
+
   /* ---------------- gallery ---------------- */
 
   var GALLERY_CACHE_KEY = 'anyara.gallery.v1';
@@ -305,6 +348,7 @@ window.Anyara = (function () {
   return {
     configured: configured,
     loadTalk: loadTalk,
+    loadFaq: loadFaq,
     loadGallery: loadGallery,
     photoUrl: photoUrl,
     uploadPhoto: uploadPhoto,
