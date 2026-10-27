@@ -152,6 +152,35 @@
       </div>
     </section>
 
+    <!-- ---------- gallery ---------- -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Gallery photos</h2>
+        <div class="card-head-actions">
+          <span class="save-state" id="galState"></span>
+          <button class="btn btn-ghost btn-sm" id="btnGalReload">Reload</button>
+        </div>
+      </div>
+      <p class="card-lede">What advisors see under <strong>Gallery</strong> in the sales app. Photos
+      are resized in the browser before upload, so you can drop in originals straight from a camera
+      or phone.</p>
+
+      <div class="gal-upload">
+        <label class="gal-album-pick">Album
+          <input type="text" id="galAlbum" list="galAlbums" placeholder="The Estate">
+          <datalist id="galAlbums"></datalist>
+        </label>
+        <input type="file" id="galFiles" accept="image/*" multiple hidden>
+        <button class="btn btn-primary" type="button" id="btnGalPick">Choose photos</button>
+        <span class="drop-or">or drag them here</span>
+      </div>
+
+      <div id="galMsg"></div>
+      <div class="gal-progress" id="galProgress" hidden></div>
+
+      <div id="galAlbumsWrap"></div>
+    </section>
+
     <!-- ---------- history ---------- -->
     <section class="card">
       <h2>Import history</h2>
@@ -177,5 +206,6 @@
 <script src="../lots.js"></script>
 <script src="admin.js"></script>
 <script src="talk.js"></script>
+<script src="gallery.js"></script>
 </body>
 </html>

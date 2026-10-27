@@ -267,3 +267,60 @@ create policy talk_questions_select on public.talk_questions
 drop policy if exists talk_questions_admin on public.talk_questions;
 create policy talk_questions_admin on public.talk_questions
   for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- ------------------------------------------------------------- gallery --
+--
+-- Photos live in the public `gallery` storage bucket; this table holds the
+-- ordering, captions and album grouping. The bucket is public so the CDN can
+-- serve images without an auth round trip and the iPads can cache them
+-- offline — object paths are random UUIDs, and nothing confidential goes here.
+
+insert into storage.buckets (id, name, public)
+values ('gallery', 'gallery', true)
+on conflict (id) do update set public = true;
+
+create table if not exists public.gallery_photos (
+  id           uuid primary key default gen_random_uuid(),
+  path         text not null unique,
+  caption      text,
+  album        text not null default 'The Estate',
+  sort_order   integer not null default 100,
+  active       boolean not null default true,
+  width        integer,
+  height       integer,
+  bytes        integer,
+  uploaded_by  uuid references auth.users (id) on delete set null,
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists gallery_album_idx on public.gallery_photos (album, sort_order);
+
+alter table public.gallery_photos enable row level security;
+
+drop policy if exists gallery_select on public.gallery_photos;
+create policy gallery_select on public.gallery_photos
+  for select to authenticated using (true);
+
+drop policy if exists gallery_admin on public.gallery_photos;
+create policy gallery_admin on public.gallery_photos
+  for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists gallery_objects_read on storage.objects;
+create policy gallery_objects_read on storage.objects
+  for select using (bucket_id = 'gallery');
+
+drop policy if exists gallery_objects_insert on storage.objects;
+create policy gallery_objects_insert on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'gallery' and public.is_admin());
+
+drop policy if exists gallery_objects_update on storage.objects;
+create policy gallery_objects_update on storage.objects
+  for update to authenticated
+  using (bucket_id = 'gallery' and public.is_admin())
+  with check (bucket_id = 'gallery' and public.is_admin());
+
+drop policy if exists gallery_objects_delete on storage.objects;
+create policy gallery_objects_delete on storage.objects
+  for delete to authenticated
+  using (bucket_id = 'gallery' and public.is_admin());

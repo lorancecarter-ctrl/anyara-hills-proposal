@@ -304,10 +304,24 @@
       </div>
     </section>
 
+    <!-- ---------- GALLERY ---------- -->
+    <section class="scene" data-scene="gallery">
+      <header class="scene-head">
+        <span class="eyebrow">06 — The Gallery</span>
+        <h1>See it for yourself.</h1>
+        <p class="lede">The estate, the architecture and the life it is built for.</p>
+      </header>
+      <div class="scene-body">
+        <div id="galleryAlbums"></div>
+        <p class="fine" id="galleryEmpty" hidden>No photographs have been added yet. Your admin can
+        upload them from the Pricing Admin console.</p>
+      </div>
+    </section>
+
     <!-- ---------- OWNERSHIP ---------- -->
     <section class="scene" data-scene="ownership">
       <header class="scene-head">
-        <span class="eyebrow">06 — Ownership</span>
+        <span class="eyebrow">07 — Ownership</span>
         <h1>What ownership involves.</h1>
         <p class="lede">Clear, stated terms — the questions guests ask most often, answered plainly.</p>
       </header>
@@ -533,6 +547,15 @@
     </section>
 
   </main>
+</div>
+
+<!-- ============ LIGHTBOX ============ -->
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+  <img class="lb-img" id="lbImg" alt="">
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+  <p class="lb-caption" id="lbCaption"></p>
 </div>
 
 <!-- ============ SESSION SHEET ============ -->

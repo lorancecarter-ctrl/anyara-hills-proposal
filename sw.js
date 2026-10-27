@@ -1,7 +1,7 @@
 /* Anyara Hills — offline cache.
    Bump CACHE when you change any app file, so iPads pick the new version up. */
 
-const CACHE = 'anyara-v32';
+const CACHE = 'anyara-v34';
 
 const SHELL = [
   './',
@@ -41,7 +41,11 @@ self.addEventListener('message', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      // keep both the current shell cache and the current photo cache;
+      // photos are expensive to re-download and survive an app update fine
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE && k !== PHOTO_CACHE).map(k => caches.delete(k))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -50,6 +54,18 @@ self.addEventListener('activate', event => {
 // must always hit the network — serving those from a cache would hand back a
 // stale price list, or a stale session.
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
+// Gallery photos are the one cross-origin thing worth keeping: an advisor
+// mid-viewing should not lose the imagery because the Wi-Fi dropped. Only the
+// public storage path — never the REST or auth endpoints.
+// Deliberately not tied to CACHE: photos are expensive to fetch and have no
+// reason to be re-downloaded just because the app code changed.
+const PHOTO_CACHE = 'anyara-photos-v1';
+const PHOTO_LIMIT = 120;
+
+function isGalleryPhoto(url) {
+  return url.pathname.includes('/storage/v1/object/public/gallery/');
+}
 
 function isCacheable(url) {
   if (FONT_HOSTS.includes(url.hostname)) return true;
@@ -63,7 +79,30 @@ function isCacheable(url) {
 self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
-  if (!isCacheable(new URL(req.url))) return;               // straight to the network
+
+  const reqUrl = new URL(req.url);
+
+  // Photos: serve from cache when present, otherwise fetch and keep a copy,
+  // trimming the oldest so a large gallery cannot fill the device.
+  if (isGalleryPhoto(reqUrl)) {
+    event.respondWith(
+      caches.open(PHOTO_CACHE).then(cache =>
+        cache.match(req).then(hit => hit || fetch(req).then(res => {
+          if (res && (res.ok || res.type === 'opaque')) {
+            cache.put(req, res.clone());
+            cache.keys().then(keys => {
+              const excess = keys.length - PHOTO_LIMIT;
+              for (let i = 0; i < excess; i++) cache.delete(keys[i]);
+            });
+          }
+          return res;
+        }))
+      ).catch(() => new Response('', { status: 503, statusText: 'Offline' }))
+    );
+    return;
+  }
+
+  if (!isCacheable(reqUrl)) return;                         // straight to the network
 
   // Navigations: network first, fall back to the cached shell when offline.
   if (req.mode === 'navigate') {

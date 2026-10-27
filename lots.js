@@ -188,9 +188,127 @@ window.Anyara = (function () {
       .catch(fromCache);
   }
 
+  /* ---------------- gallery ---------------- */
+
+  var GALLERY_CACHE_KEY = 'anyara.gallery.v1';
+  var GALLERY_BUCKET = 'gallery';
+
+  function photoUrl(path) {
+    if (!cfg.SUPABASE_URL || !path) return '';
+    return cfg.SUPABASE_URL + '/storage/v1/object/public/' + GALLERY_BUCKET + '/' + path;
+  }
+
+  function loadGallery() {
+    var sb = supabase();
+
+    var cached = (function () {
+      try {
+        var raw = localStorage.getItem(GALLERY_CACHE_KEY);
+        var p = raw ? JSON.parse(raw) : null;
+        return (p && Array.isArray(p.albums) && p.albums.length) ? p : null;
+      } catch (e) { return null; }
+    })();
+    var fromCache = function () {
+      return cached ? { albums: cached.albums, source: 'cache' } : { albums: [], source: 'none' };
+    };
+
+    if (!sb) return Promise.resolve(fromCache());
+
+    return sb.from('gallery_photos')
+      .select('id,path,caption,album,sort_order,active,width,height')
+      .eq('active', true)
+      .order('album', { ascending: true })
+      .order('sort_order', { ascending: true })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        var byAlbum = {};
+        var order = [];
+        (res.data || []).forEach(function (p) {
+          if (!byAlbum[p.album]) { byAlbum[p.album] = []; order.push(p.album); }
+          byAlbum[p.album].push({
+            id: p.id, caption: p.caption || '', url: photoUrl(p.path),
+            width: p.width, height: p.height
+          });
+        });
+        var albums = order.map(function (name) { return { album: name, photos: byAlbum[name] }; });
+        if (!albums.length) return fromCache();
+        try {
+          localStorage.setItem(GALLERY_CACHE_KEY, JSON.stringify({
+            albums: albums, fetchedAt: new Date().toISOString()
+          }));
+        } catch (e) { /* quota */ }
+        return { albums: albums, source: 'network' };
+      })
+      .catch(fromCache);
+  }
+
+  /* Advisors upload straight off a phone, so originals run to several MB.
+     Downscale in the browser before upload — the gallery has to stay quick
+     over gallery Wi-Fi and inside the iPad's offline cache. */
+  function prepareImage(file, maxEdge, quality) {
+    maxEdge = maxEdge || 2000;
+    quality = quality || 0.82;
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight;
+        var scale = Math.min(1, maxEdge / Math.max(w, h));
+        var tw = Math.round(w * scale), th = Math.round(h * scale);
+        var canvas = document.createElement('canvas');
+        canvas.width = tw; canvas.height = th;
+        canvas.getContext('2d').drawImage(img, 0, 0, tw, th);
+        canvas.toBlob(function (blob) {
+          URL.revokeObjectURL(url);
+          if (!blob) { reject(new Error('Could not process that image.')); return; }
+          // keep the original if shrinking somehow made it larger
+          var out = (blob.size < file.size) ? blob : file;
+          resolve({ blob: out, width: tw, height: th, bytes: out.size });
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error('That file is not an image the browser can read.'));
+      };
+      img.src = url;
+    });
+  }
+
+  function uploadPhoto(file, meta) {
+    var sb = supabase();
+    if (!sb) return Promise.reject(new Error('not-configured'));
+    return prepareImage(file).then(function (prepared) {
+      var name = (crypto && crypto.randomUUID ? crypto.randomUUID()
+                 : String(Date.now()) + Math.random().toString(16).slice(2)) + '.jpg';
+      var path = (meta.album || 'misc').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '/' + name;
+      return sb.storage.from(GALLERY_BUCKET)
+        .upload(path, prepared.blob, { contentType: 'image/jpeg', upsert: false })
+        .then(function (res) {
+          if (res.error) throw res.error;
+          return sb.from('gallery_photos').insert({
+            path: path, caption: meta.caption || null, album: meta.album,
+            sort_order: meta.sort_order || 100,
+            width: prepared.width, height: prepared.height, bytes: prepared.bytes
+          }).select('id,path,caption,album,sort_order,active,width,height,bytes').single();
+        });
+    });
+  }
+
+  function deletePhoto(photo) {
+    var sb = supabase();
+    if (!sb) return Promise.reject(new Error('not-configured'));
+    return sb.storage.from(GALLERY_BUCKET).remove([photo.path]).then(function () {
+      return sb.from('gallery_photos').delete().eq('id', photo.id);
+    });
+  }
+
   return {
     configured: configured,
     loadTalk: loadTalk,
+    loadGallery: loadGallery,
+    photoUrl: photoUrl,
+    uploadPhoto: uploadPhoto,
+    deletePhoto: deletePhoto,
     supabase: supabase,
     signIn: signIn,
     signOut: signOut,
