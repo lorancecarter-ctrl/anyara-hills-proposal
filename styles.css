@@ -59,7 +59,7 @@ button{font:inherit;color:inherit}
   gap:14px;
 }
 .rail-mark{padding:4px 0 12px}
-.rail-logo{width:52px;filter:brightness(0) invert(1);opacity:.94}
+.rail-logo{width:52px;opacity:.94}
 .rail-items{
   flex:1;
   width:100%;
@@ -169,7 +169,6 @@ p{margin:0 0 14px;line-height:1.66}
 .cover-inner{position:relative;padding:0 40px;max-width:640px}
 .cover-logo{
   width:min(238px,44vw);margin:0 auto 30px;
-  filter:brightness(0) invert(1);
 }
 .cover-tag{
   font-family:var(--serif);font-style:italic;
@@ -687,7 +686,7 @@ body.is-locked{overflow:hidden}
   display:flex;flex-direction:column;
   text-align:center;
 }
-.gate-logo{width:168px;margin:0 auto 24px;filter:brightness(0) invert(1)}
+.gate-logo{width:168px;margin:0 auto 24px}
 .gate-kicker{
   font-size:10px;letter-spacing:.26em;text-transform:uppercase;
   color:rgba(244,243,235,.5);margin:0 0 14px;

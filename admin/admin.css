@@ -12,7 +12,7 @@
   background:var(--green);color:var(--ivory);
 }
 .admin-brand{display:flex;align-items:center;gap:16px}
-.admin-logo{width:92px;filter:brightness(0) invert(1)}
+.admin-logo{width:92px}
 .admin-title{
   font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
   color:rgba(244,243,235,.62);

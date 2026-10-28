@@ -1,7 +1,7 @@
 /* Anyara Hills — offline cache.
    Bump CACHE when you change any app file, so iPads pick the new version up. */
 
-const CACHE = 'anyara-v36';
+const CACHE = 'anyara-v37';
 
 const SHELL = [
   './',
@@ -15,6 +15,7 @@ const SHELL = [
   './vendor/supabase.js',
   './manifest.webmanifest',
   './assets/logo-black.png',
+  './assets/logo-white.png',
   './assets/watermark-white.png',
   './assets/icon-180.png',
   './assets/icon-192.png',
