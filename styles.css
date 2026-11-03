@@ -839,7 +839,7 @@ body.is-locked{overflow:hidden}
   .doc-lead{font-size:10pt;margin-bottom:7px}
 
   .doc-table{font-size:11pt}
-  .doc-table th,.doc-table td{padding:3px 13px;line-height:1.3}
+  .doc-table th,.doc-table td{padding:2px 13px;line-height:1.3}
   .doc-table thead th{font-size:9.5pt;letter-spacing:.14em}
   .doc-table tr.is-total td{font-size:15pt}
   .doc-fine{font-size:8pt;line-height:1.35;margin-top:7px}

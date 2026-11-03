@@ -128,9 +128,12 @@ Open `/admin/` (e.g. `http://localhost:8080/admin/`) and sign in with your admin
   a row-by-row preview marking each lot New or Updated, and a list of any rows it had to reject and
   why. Nothing is saved until you press Publish.
 - **Publishing never deletes.** Lots absent from the file are left untouched and called out in the
-  preview. To take a lot off the list, set its status to `Sold` rather than removing the row.
-- **Nett price and psf are computed by the database**, so the admin console, the app and the
-  proposal can never disagree. Don't put them in the spreadsheet.
+  preview.
+- **Sales status is never shown.** The app and the admin console present lot and pricing only, so
+  a `Status` column in the spreadsheet is ignored.
+- **SPA price, both price-psf figures and the acre figure are derived**, from the area and the
+  prices, so the admin console, the app and the proposal can never disagree. Leave them in the
+  spreadsheet if your sheet carries them — they are ignored, not read.
 - Every import is logged with the filename, counts and who ran it.
 
 Lot numbers keep their exact form — `001` and `003A` survive both CSV and Excel without losing
@@ -172,7 +175,6 @@ Parsing *(Approved) Anyara Hills — Pricing Revision V12B*:
 |---|---|
 | Lots parsed | **338 of 338**, zero rejected |
 | By phase | 224 Phase 1 & 2 · 104 Phase 3 · 10 Phase 4a |
-| By status | 197 Available · 122 Sold · 19 Booked |
 | Spot checks | Lot 001 → RM 9,613,750 list, RM 7,691,000 SPA, RM 150 psf · Lot 217 → RM 10,546,250 / RM 8,437,000 / RM 180 psf · Lot 800 → RM 10,045,000, no privilege, RM 200 psf |
 
 **Never commit a real price list to this repo** — it is public. `.gitignore` blocks `*.xlsx` and
@@ -248,8 +250,8 @@ who quoted what — that needs a backend, and it's a different piece of work.
 
 - **Talk** — the 30 luxury conversation questions by stage, tappable to track what you've asked,
   plus the expander prompts and a notes field for the visit.
-- **Build** — enter the lot, size and pricing; nett price, psf, loan quantum, down payment and the
-  monthly instalment are calculated. Privileges and validity are editable.
+- **Build** — enter the lot, area and pricing; the acre figure, SPA price, both price-psf figures,
+  loan quantum, down payment and the monthly instalment are calculated. Privileges and validity are editable.
 - **Proposal** — the finished client-facing document, matching the Sales Package Proposal template.
   "Print / Save as PDF" prints the document alone on A4, with no app chrome.
 - **FAQ** — the full project FAQ, searchable, plus the Q&A responses from the etiquette guide.
@@ -288,8 +290,8 @@ The pricing maths was checked against the worked example in the Sales Package Pr
 
 | Output | App | Template |
 |--------|-----|----------|
-| Nett SPA price | RM 4,235,000 | RM 4,235,000 |
-| Nett price psf | RM 96 psf | RM 96 psf |
+| SPA price | RM 4,235,000 | RM 4,235,000 |
+| SPA price psf | RM 96.35 | RM 96 psf (template rounds to the ringgit) |
 | Loan quantum (60%) | RM 2,541,000 | RM 2,541,000 |
 | Down payment (40%) | RM 1,694,000 | RM 1,694,000 |
 | Monthly instalment (3.5%, 30 yr) | RM 11,410 | RM 11,410 |

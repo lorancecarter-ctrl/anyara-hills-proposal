@@ -139,10 +139,6 @@
   font-size:13.5px;color:var(--stone);font-style:italic;
 }
 
-.status-available{color:var(--green-3);font-weight:500}
-.status-reserved{color:var(--clay)}
-.status-booked{color:var(--clay);font-weight:500}
-.status-sold{color:var(--stone)}
 
 .act-new{color:var(--green-3);font-weight:600}
 .act-changed{color:var(--clay);font-weight:600}

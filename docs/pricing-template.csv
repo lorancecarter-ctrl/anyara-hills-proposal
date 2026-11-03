@@ -1,5 +1,4 @@
-Phase,Lot Number,Area (SQFT),LIST PRICE (RM),SPA PRICE (RM),STATUS,CATEGORY,Notes
-Phase 1 & 2,001,51271,9613750,7691000,Sold,Signature,
-Phase 1 & 2,003A,49833,7475000,5980000,Sold,Signature,Alphanumeric lot number
-Phase 3,217,46871,10546250,8437000,Available,Private,
-Phase 4a,800,50225,,10045000,Available,,No revised list price - nett is used as the list
+Phase,Lot Number,Area (Acre),Area (SQFT),LIST PRICE (RM),LIST PRICE PSF (RM),SPA PRICE (RM),SPA PRICE PSF (RM)
+Phase 1 & 2,001,1.177,51271,9613750,187.51,7691000,150.00
+Phase 1 & 2,003A,1.144,49833,7475000,150.00,5980000,120.00
+Phase 3,217,1.076,46871,10546250,225.01,8437000,180.01

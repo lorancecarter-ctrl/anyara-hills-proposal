@@ -394,16 +394,18 @@
               </select>
             </label>
             <p class="lot-status" id="lotStatus" hidden></p>
+            <label class="ro">Phase<output id="oPhase">—</output></label>
             <label>Lot number<input type="text" id="fLot" placeholder="e.g. 036"></label>
             <!-- text + inputmode, not type=number: a number field cannot display
                  thousand separators. app.js formats these on blur. -->
-            <label>Land size (sf)<input type="text" id="fSf" inputmode="decimal" class="js-num" placeholder="43,953"></label>
-            <label class="ro">Land size (acres)<output id="oAcres">—</output></label>
+            <label>Area (sq ft)<input type="text" id="fSf" inputmode="decimal" class="js-num" placeholder="43,953"></label>
+            <label class="ro">Area (acre)<output id="oAcres">—</output></label>
           </fieldset>
 
           <fieldset class="fs">
             <legend>Pricing</legend>
             <label>List price (RM)<input type="text" id="fList" inputmode="decimal" class="js-num" placeholder="6,043,750"></label>
+            <label class="ro">List price psf<output id="oListPsf">—</output></label>
 
             <label class="tick">
               <input type="checkbox" id="fPrivilegeOn" checked>
@@ -417,9 +419,9 @@
             </label>
             <label class="indent">Special discount (RM)<input type="text" id="fSpecial" inputmode="decimal" class="js-num" placeholder="600,000"></label>
 
-            <label class="ro">Nett SPA price<output id="oNett">—</output></label>
+            <label class="ro">SPA price<output id="oNett">—</output></label>
             <p class="warn-inline" id="nettWarning" hidden></p>
-            <label class="ro">Nett price psf<output id="oPsf">—</output></label>
+            <label class="ro">SPA price psf<output id="oPsf">—</output></label>
           </fieldset>
 
           <fieldset class="fs">
@@ -473,13 +475,16 @@
           <h2>Your lot &amp; pricing</h2>
           <table class="doc-table doc-table-kv">
             <tbody>
-              <tr><th>Lot No.</th><td id="pLot">—</td></tr>
-              <tr><th>Land Size</th><td id="pSize">—</td></tr>
+              <tr><th>Phase</th><td id="pPhase">—</td></tr>
+              <tr><th>Lot Number</th><td id="pLot">—</td></tr>
+              <tr><th>Area (Acre)</th><td id="pAcre">—</td></tr>
+              <tr><th>Area (sq ft)</th><td id="pSf">—</td></tr>
               <tr><th>List Price</th><td id="pList">—</td></tr>
+              <tr><th>List Price PSF</th><td id="pListPsf">—</td></tr>
               <tr class="is-credit" id="pPrivRow"><th>Anyara Privilege Entitlement</th><td id="pPriv">—</td></tr>
               <tr class="is-credit" id="pSpecialRow"><th>Special Discount</th><td id="pSpecial">—</td></tr>
-              <tr class="is-total"><th>Nett SPA Price</th><td id="pNett">—</td></tr>
-              <tr><th>Nett Price (PSF)</th><td id="pPsf">—</td></tr>
+              <tr class="is-total"><th>SPA Price</th><td id="pNett">—</td></tr>
+              <tr><th>SPA Price PSF</th><td id="pPsf">—</td></tr>
             </tbody>
           </table>
         </section>

@@ -127,7 +127,7 @@ window.Anyara = (function () {
     }
 
     return sb.from('lots')
-      .select('id,lot_no,phase,land_size_sf,list_price,privilege,nett_price,psf,status,notes,updated_at')
+      .select('id,lot_no,phase,land_size_sf,list_price,privilege,nett_price,psf,notes,updated_at')
       .order('lot_no', { ascending: true })
       .then(function (res) {
         if (res.error) throw res.error;

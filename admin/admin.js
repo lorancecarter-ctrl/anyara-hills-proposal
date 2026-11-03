@@ -33,12 +33,9 @@
       names: ['spa price', 'spa price rm', 'nett price', 'nett spa price', 'net price'] },
     { key: 'privilege',    label: 'Privilege',
       names: ['privilege', 'privilege entitlement', 'anyara privilege entitlement', 'entitlement', 'discount', 'rebate'] },
-    { key: 'status',       label: 'Status',          names: ['status'] },
     { key: 'category',     label: 'Category',        names: ['category', 'type', 'tier'] },
     { key: 'notes',        label: 'Notes',           names: ['notes', 'note', 'remark', 'remarks'] }
   ];
-
-  var STATUSES = ['Available', 'Reserved', 'Booked', 'Sold'];
 
   /* ================= helpers ================= */
 
@@ -238,14 +235,6 @@
         }
       }
 
-      var status = get(rt, 'status');
-      status = status ? String(status).trim() : '';
-      var matched = STATUSES.filter(function (s) { return s.toLowerCase() === status.toLowerCase(); })[0];
-      if (!matched) {
-        if (status) issues.push({ row: lineNo, message: 'Lot ' + lot + ': unknown status “' + status + '” — set to Available.' });
-        matched = 'Available';
-      }
-
       var txt = function (key) {
         var v = get(rt, key);
         v = (v === null || v === undefined) ? '' : String(v).trim();
@@ -258,7 +247,6 @@
         land_size_sf: size,
         list_price: list,
         privilege: priv,
-        status: matched,
         phase: txt('phase'),
         category: txt('category'),
         notes: txt('notes')
@@ -383,7 +371,6 @@
       var same = Number(cur.land_size_sf) === r.land_size_sf
         && Number(cur.list_price) === r.list_price
         && Number(cur.privilege) === r.privilege
-        && String(cur.status) === r.status
         && (cur.phase || null) === (r.phase || null)
         && (cur.category || null) === (r.category || null);
       if (same) { unchanged++; r._action = 'same'; } else { updates++; r._action = 'changed'; }
@@ -499,18 +486,24 @@
       ? Number(r.nett_price) : (Number(r.list_price) - Number(r.privilege));
   }
 
+  function psf(amount, sf) {
+    return sf > 0 ? Number(amount / sf).toLocaleString('en-MY',
+      { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
+  }
+
+  /* Same columns as the master price list, in the same order. Sales status is
+     not one of them — the app never shows it. */
   var LOT_COLUMNS = [
-    { label: 'Lot',       value: function (r) { return r.lot_no; } },
-    { label: 'Phase',     value: function (r) { return r.phase || '—'; } },
-    { label: 'Category',  value: function (r) { return r.category || '—'; } },
-    { label: 'Size (sf)', numeric: true, value: function (r) { return sfFmt(r.land_size_sf); } },
-    { label: 'List',      numeric: true, value: function (r) { return rm(r.list_price); } },
-    { label: 'Privilege', numeric: true, value: function (r) { return rm(r.privilege); } },
-    { label: 'Nett / SPA', numeric: true, value: function (r) { return rm(nettOf(r)); } },
-    { label: 'PSF',       numeric: true, value: function (r) {
-        return r.land_size_sf > 0 ? rm(nettOf(r) / r.land_size_sf) : '—'; } },
-    { label: 'Status',    value: function (r) { return r.status; },
-      cls: function (r) { return 'status-' + String(r.status).toLowerCase(); } }
+    { label: 'Phase',          value: function (r) { return r.phase || '—'; } },
+    { label: 'Lot Number',     value: function (r) { return r.lot_no; } },
+    { label: 'Area (Acre)',    numeric: true, value: function (r) {
+        return r.land_size_sf > 0 ? (r.land_size_sf / 43560).toFixed(3) : '—'; } },
+    { label: 'Area (SQFT)',    numeric: true, value: function (r) { return sfFmt(r.land_size_sf); } },
+    { label: 'List Price',     numeric: true, value: function (r) { return rm(r.list_price); } },
+    { label: 'List Price PSF', numeric: true, value: function (r) { return psf(r.list_price, r.land_size_sf); } },
+    { label: 'SPA Price',      numeric: true, value: function (r) { return rm(nettOf(r)); } },
+    { label: 'SPA Price PSF',  numeric: true, value: function (r) { return psf(nettOf(r), r.land_size_sf); } },
+    { label: 'Privilege',      numeric: true, value: function (r) { return rm(r.privilege); } }
   ];
 
   /* ================= messages ================= */
@@ -536,7 +529,7 @@
     var payload = parsed.rows.map(function (r) {
       return {
         lot_no: r.lot_no, land_size_sf: r.land_size_sf, list_price: r.list_price,
-        privilege: r.privilege, status: r.status, phase: r.phase,
+        privilege: r.privilege, phase: r.phase,
         category: r.category, notes: r.notes
       };
     });
@@ -598,10 +591,13 @@
         meta.textContent = 'No lots yet — upload a price list to get started.';
       } else {
         var newest = allLots.reduce(function (a, l) { return (!a || l.updated_at > a) ? l.updated_at : a; }, null);
-        var counts = {};
-        allLots.forEach(function (l) { counts[l.status] = (counts[l.status] || 0) + 1; });
+        var byPhase = {};
+        allLots.forEach(function (l) {
+          var k = l.phase || 'Unassigned';
+          byPhase[k] = (byPhase[k] || 0) + 1;
+        });
         meta.textContent = allLots.length + ' lots — '
-          + Object.keys(counts).map(function (k) { return counts[k] + ' ' + k.toLowerCase(); }).join(', ')
+          + Object.keys(byPhase).sort().map(function (k) { return byPhase[k] + ' in ' + k; }).join(', ')
           + (res.source === 'cache' ? ' (cached — could not reach Supabase)' : '')
           + '. Last updated ' + when(newest) + '.';
       }
@@ -613,7 +609,7 @@
   function renderLots() {
     var q = ($('lotSearch').value || '').trim().toLowerCase();
     var rows = q ? allLots.filter(function (l) {
-      return (l.lot_no + ' ' + (l.phase || '') + ' ' + (l.category || '') + ' ' + l.status)
+      return (l.lot_no + ' ' + (l.phase || '') + ' ' + (l.category || ''))
         .toLowerCase().indexOf(q) !== -1;
     }) : allLots;
     table($('lotsTable'), LOT_COLUMNS, rows, q ? 'No lot matches that.' : 'No lots yet.');

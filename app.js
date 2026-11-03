@@ -11,7 +11,7 @@
   var blank = function () {
     return {
       guest: '', advisor: '', date: todayISO(),
-      lot: '', sf: '', list: '', privilege: '',
+      phase: '', lot: '', sf: '', list: '', privilege: '',
       privilegeOn: true,          // comes from the price list, so on by default
       special: '600000', specialOn: false,   // opted into per deal, not automatic
       mof: 60, rate: 3.5, tenure: 30, validWeeks: 2,
@@ -143,6 +143,7 @@
       specialOn: !!state.specialOn,
       discountTotal: priv + special,
       nett: nett,
+      listPsf: sf > 0 ? list / sf : 0,
       psf: sf > 0 ? nett / sf : 0,
       mof: mof,
       loan: loan,
@@ -383,7 +384,7 @@
     });
 
     $('btnClearLot').addEventListener('click', function () {
-      state.lot = ''; state.sf = ''; state.list = ''; state.privilege = '';
+      state.lot = ''; state.phase = ''; state.sf = ''; state.list = ''; state.privilege = '';
       var sel = $('fLotPick');
       if (sel) sel.value = '';
       syncFormFromState();
@@ -435,9 +436,12 @@
 
   function renderOutputs() {
     var d = derive();
-    $('oAcres').textContent   = d.sf > 0 ? d.acres.toFixed(3) + ' acres' : '—';
+    var priced = d.sf > 0 && hasVal(state.list);
+    $('oPhase').textContent   = state.phase || '—';
+    $('oAcres').textContent   = d.sf > 0 ? d.acres.toFixed(3) : '—';
+    $('oListPsf').textContent = priced ? rm(d.listPsf, 2) : '—';
     $('oNett').textContent    = hasVal(state.list) ? rm(d.nett) : '—';
-    $('oPsf').textContent     = (d.sf > 0 && hasVal(state.list)) ? rm(d.psf) + ' psf' : '—';
+    $('oPsf').textContent     = priced ? rm(d.psf, 2) : '—';
 
     // Two discounts can now be applied together, so guard the obvious error.
     var warn = $('nettWarning');
@@ -474,11 +478,16 @@
     var dash = '—';
     applyAdvisorContact();   // keep the footer in step with the Advisor field
 
-    $('pLot').textContent  = state.lot ? ('Lot ' + state.lot) : dash;
-    $('pSize').textContent = d.sf > 0
-      ? (d.acres.toFixed(3) + ' acres  |  ' + sfFmt(d.sf))
-      : dash;
-    $('pList').textContent = hasVal(state.list) ? rm(d.list) : dash;
+    /* The rows below follow the master price list column for column: phase,
+       lot, area in acres and square feet, then list and SPA price each with
+       their price psf. Sales status is deliberately not among them. */
+    $('pPhase').textContent = state.phase || dash;
+    $('pLot').textContent   = state.lot || dash;
+    $('pAcre').textContent  = d.sf > 0 ? d.acres.toFixed(3) : dash;
+    // the row label carries the unit, so the figure is left bare, as on the sheet
+    $('pSf').textContent    = d.sf > 0 ? d.sf.toLocaleString('en-MY', { maximumFractionDigits: 0 }) : dash;
+    $('pList').textContent  = hasVal(state.list) ? rm(d.list) : dash;
+    $('pListPsf').textContent = (d.sf > 0 && hasVal(state.list)) ? rm(d.listPsf, 2) : dash;
 
     /* An unticked discount is left off the client's copy entirely, rather than
        shown as nil — the proposal should not advertise something not given. */
@@ -493,7 +502,7 @@
     $('pSpecial').textContent = showSpecial ? '– ' + rm(d.special) : dash;
 
     $('pNett').textContent = hasVal(state.list) ? rm(d.nett) : dash;
-    $('pPsf').textContent  = (d.sf > 0 && hasVal(state.list)) ? rm(d.psf) + ' psf' : dash;
+    $('pPsf').textContent  = (d.sf > 0 && hasVal(state.list)) ? rm(d.psf, 2) : dash;
 
     var body = $('pPrivBody');
     body.textContent = '';
@@ -612,9 +621,8 @@
       o.value = l.lot_no;
       var nett = (l.nett_price !== null && l.nett_price !== undefined)
         ? Number(l.nett_price) : (Number(l.list_price) - Number(l.privilege));
-      o.textContent = 'Lot ' + l.lot_no + ' · ' + rm(nett)
-        + (l.status && l.status !== 'Available' ? ' · ' + l.status : '');
-      if (l.status === 'Sold') o.disabled = true;
+      // No sales status here: the advisor picks on lot and price alone.
+      o.textContent = 'Lot ' + l.lot_no + ' · ' + rm(nett);
       sel.appendChild(o);
     });
 
@@ -633,6 +641,7 @@
     var l = lots.filter(function (x) { return x.lot_no === lotNo; })[0];
     if (!l) return;
     state.lot = l.lot_no;
+    state.phase = l.phase || '';
     state.sf = String(l.land_size_sf);
     state.list = String(l.list_price);
     state.privilege = String(l.privilege);
