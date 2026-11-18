@@ -571,12 +571,22 @@ p{margin:0 0 14px;line-height:1.66}
 .doc-fine{font-size:11.5px;line-height:1.6;color:var(--stone);margin:11px 0 0;font-style:italic}
 .doc-validity p{font-size:14px;color:#454b44;margin:0}
 .doc-foot{
-  display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;
+  /* column-gap only: the disclaimer wraps onto its own row and sets its own
+     spacing, so a row-gap here would just add dead space above it */
+  display:flex;justify-content:space-between;column-gap:30px;row-gap:10px;flex-wrap:wrap;
   margin-top:44px;padding-top:22px;border-top:1px solid var(--line);
   font-size:11px;line-height:1.7;color:var(--stone);
 }
 .doc-foot strong{color:var(--green);font-size:12px;letter-spacing:.06em}
 .doc-dev{display:inline-block;margin-top:6px;font-style:italic}
+/* the footer already wraps, so a 100% basis drops this below the two columns */
+.doc-disclaimer{
+  flex:0 0 100%;
+  margin:16px 0 0;padding-top:13px;
+  border-top:1px solid var(--line);
+  font-size:9.5px;line-height:1.55;color:var(--stone);
+}
+.doc-disclaimer strong{color:var(--green);letter-spacing:.04em}
 #pAdvisorName,#pAdvisorPhone{display:block}
 #pAdvisorName{color:var(--green);font-weight:500}
 
@@ -797,7 +807,7 @@ body.is-locked{overflow:hidden}
 
 /* ---------- print: the proposal only ---------- */
 @media print{
-  @page{size:A4;margin:12mm}
+  @page{size:A4;margin:10mm}
   html,body{height:auto;background:#fff}
   /* iOS inflates text when it thinks a column is narrow; that silently made
      the proposal taller on iPad than on a desktop browser. */
@@ -823,7 +833,7 @@ body.is-locked{overflow:hidden}
      A client gets a single page, not four. Everything below is compression:
      tighter type, tighter rows, no decorative whitespace. Kept proportional
      so it still reads as the same document, only smaller. */
-  .doc-head{padding-bottom:8px;margin-bottom:10px}
+  .doc-head{padding-bottom:6px;margin-bottom:8px}
   .doc-logo{width:70px;margin-bottom:6px}
   .doc-kicker{font-size:7pt;letter-spacing:.3em;margin-bottom:6px}
   .doc-title{font-size:19pt;margin-bottom:3px}
@@ -831,25 +841,27 @@ body.is-locked{overflow:hidden}
 
   /* flow, do not jump: a whole block moving to page two is what left
      page one two-thirds empty */
-  .doc-block{margin-bottom:8px}
+  .doc-block{margin-bottom:6px}
   .doc-table tr{page-break-inside:avoid}
   .doc-table thead{display:table-header-group}
   .doc-block h2{font-size:9pt;letter-spacing:.18em;margin-bottom:6px;padding-bottom:5px}
   .doc-h3{font-size:15pt;margin:16px 0 8px}
   .doc-lead{font-size:10pt;margin-bottom:7px}
 
-  .doc-table{font-size:11pt}
+  .doc-table{font-size:10pt}
   .doc-table th,.doc-table td{padding:2px 13px;line-height:1.3}
   .doc-table thead th{font-size:9.5pt;letter-spacing:.14em}
-  .doc-table tr.is-total td{font-size:15pt}
-  .doc-fine{font-size:8pt;line-height:1.35;margin-top:7px}
+  .doc-table tr.is-total td{font-size:14pt}
+  .doc-fine{font-size:8pt;line-height:1.35;margin-top:5px}
   .doc-validity p{font-size:10pt}
 
   .doc-foot{
     page-break-inside:avoid;
-    margin-top:11px;padding-top:9px;
+    margin-top:8px;padding-top:8px;
     font-size:8pt;line-height:1.45;
   }
   .doc-foot strong{font-size:10pt}
   .doc-dev{margin-top:5px}
+  .doc-disclaimer{margin-top:8px;padding-top:7px;font-size:7pt;line-height:1.35}
+  .doc-disclaimer strong{font-size:7pt}
 }
